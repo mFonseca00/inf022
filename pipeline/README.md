@@ -147,32 +147,27 @@ Outros modelos disponíveis: `gpt-4o`, `gpt-4-turbo`
 
 ### Ollama (modelos locais via Docker)
 
-Permite rodar modelos localmente sem custo e sem enviar dados para serviços externos.
+Permite rodar modelos localmente sem custo e sem enviar dados para serviços externos. O projeto já inclui os arquivos Docker Compose na raiz do repositório.
 
-**1. Suba o Ollama com Docker:**
-
-```bash
-docker run -d \
-  --name ollama \
-  -p 11434:11434 \
-  -v ollama:/root/.ollama \
-  ollama/ollama
-```
-
-**2. Baixe um modelo:**
+**1. Suba o Ollama com Docker Compose:**
 
 ```bash
-# Exemplos de modelos leves e capazes em português:
-docker exec -it ollama ollama pull llama3.2
-docker exec -it ollama ollama pull gemma3
-docker exec -it ollama ollama pull qwen2.5
+# CPU (padrão)
+docker compose up -d
+
+# GPU NVIDIA (override)
+docker compose -f docker-compose.yml -f docker-compose.gpu.yml up -d
 ```
 
-**3. Configure o `.env`:**
+O serviço `ollama-setup` baixa automaticamente o modelo `qwen2.5:3b` na primeira execução.
+
+> **Atenção:** `qwen2.5:14b` rodando apenas em CPU pode ser muito lento. Para uso com CPU, considere versões menores como `qwen2.5:3b` ou `llama3.2:3b` — troque o nome do modelo no `entrypoint` do serviço `ollama-setup` em `docker-compose.yml`.
+
+**2. Configure o `.env`:**
 
 ```env
 PROVIDER=ollama
-MODEL=llama3.2
+MODEL=qwen2.5:3b
 OLLAMA_BASE_URL=http://localhost:11434/v1
 ```
 
@@ -257,6 +252,8 @@ inf022/
 ├── docs/                          # PDFs de entrada (criar manualmente)
 ├── results/                       # JSONs de saída (criado automaticamente)
 ├── pipeline/                      # Código da pipeline
+├── docker-compose.yml             # Ollama via Docker (CPU — padrão)
+├── docker-compose.gpu.yml         # Override para habilitar GPU NVIDIA
 ├── prompt_extracao_regras_v2.md   # System prompt
 ├── exemplos_extracao.xlsx         # Exemplos de extrações validadas
 └── 00_Lista de Resolucoes.xlsx    # Lista de documentos a processar

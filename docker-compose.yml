@@ -1,0 +1,26 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    container_name: ollama
+
+  ollama-setup:
+    image: ollama/ollama:latest
+    depends_on:
+      - ollama
+    container_name: ollama-setup
+    entrypoint: >
+      sh -c "
+        echo 'Aguardando Ollama iniciar...' &&
+        sleep 10 &&
+        ollama pull qwen2.5:3b &&
+        echo 'Modelo qwen2.5:3b instalado com sucesso!'
+      "
+    environment:
+      - OLLAMA_HOST=ollama:11434
+
+volumes:
+  ollama_data:
