@@ -28,6 +28,8 @@ Parâmetros de execução (opcionais — se omitidos, usam o default do provider
   TEMPERATURE=0.0      # 0.0 = mais determinístico, 1.0 = mais criativo
   MAX_TOKENS=8192      # limite de tokens na resposta
   TIMEOUT=120          # timeout por requisição em segundos
+  TOP_P=0.9            # nucleus sampling; não use junto com TEMPERATURE
+  TOP_K=40             # limita amostragem aos K tokens mais prováveis
 """
 
 import os
@@ -83,4 +85,6 @@ def get_model_settings() -> ModelSettings:
         temperature=_float("TEMPERATURE"),
         max_tokens=_int("MAX_TOKENS"),
         timeout=_float("TIMEOUT"),
+        top_p=_float("TOP_P"),
+        top_k=_int("TOP_K"),
     )

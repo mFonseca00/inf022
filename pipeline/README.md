@@ -91,9 +91,13 @@ OLLAMA_BASE_URL=http://localhost:11434/v1
 # TEMPERATURE=0.0    # 0.0 = determinístico | 1.0 = criativo
 # MAX_TOKENS=8192    # limite de tokens na resposta
 # TIMEOUT=120        # timeout por requisição em segundos
+# TOP_P=0.9          # nucleus sampling — não use junto com TEMPERATURE
+# TOP_K=40           # limita amostragem aos K tokens mais prováveis
 ```
 
 Se um parâmetro não estiver definido no `.env`, o provider usa seu próprio default. Para tarefas de extração estruturada, recomenda-se `TEMPERATURE=0.0` para resultados mais consistentes e reproduzíveis.
+
+> **Atenção:** `TOP_P` e `TEMPERATURE` controlam a aleatoriedade por mecanismos diferentes — usar os dois ao mesmo tempo pode produzir comportamentos inesperados. Escolha um ou outro.
 
 ---
 
