@@ -18,7 +18,7 @@ with open(PROMPT_PATH, encoding="utf-8") as f:
 def build_agent(model, settings: ModelSettings | None = None) -> Agent:
     return Agent(
         model=model,
-        result_type=ResultadoExtracao,
+        output_type=ResultadoExtracao,
         system_prompt=SYSTEM_PROMPT,
         model_settings=settings,
     )
@@ -48,9 +48,10 @@ def extract(text: str, filename: str, file_id: str, model, settings: ModelSettin
     result = agent.run_sync(user_message)
 
     # Garante que os campos de metadados estão preenchidos
-    resultado = result.data
+    resultado = result.output
     resultado.arquivo = filename
     resultado.id_arquivo = file_id
-    resultado.tokens = result.usage().total_tokens if result.usage() else None
+    usage = result.usage
+    resultado.tokens = usage.total_tokens if usage else None
 
     return resultado

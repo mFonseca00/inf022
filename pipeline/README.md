@@ -57,15 +57,35 @@ prompt_extracao_regras_v2.md   # System prompt utilizado pela pipeline
 
 **Pré-requisitos:** Python 3.11+
 
+Antes de rodar, crie a pasta `docs/` na raiz do repositório e coloque os PDFs que deseja processar:
+
+```
+inf022/
+└── docs/        ← crie esta pasta e coloque os PDFs aqui
+```
+
 ```bash
-# Clone o repositório e entre na pasta da pipeline
+# Entre na pasta da pipeline
 cd pipeline
+
+# Crie e ative o ambiente virtual
+python -m venv .venv
+
+# Linux/macOS
+source .venv/bin/activate
+
+# Windows (PowerShell)
+.venv\Scripts\Activate.ps1
 
 # Instale as dependências
 pip install -r requirements.txt
 
 # Crie o arquivo de configuração a partir do exemplo
+# Linux/macOS
 cp .env.example .env
+
+# Windows
+copy .env.example .env
 ```
 
 ---
@@ -199,6 +219,20 @@ results/
 └── 2025-06-02_09-15-40_llama3.2/
     ├── 01_diploma.json
     └── 10_edital.json
+```
+
+Durante a execução, a pipeline exibe o progresso no terminal:
+
+```
+Encontrados 2 PDFs.
+Resultados serao salvos em: ../results/2025-06-01_14-32-05_gemini-2.0-flash
+
+Processando: 01_diploma.pdf
+  OK 12 regras extraidas -> 01_diploma.json
+Processando: 10_edital.pdf
+  ERRO ao processar 10_edital.pdf: <mensagem de erro>
+
+Concluido.
 ```
 
 Isso permite comparar facilmente os resultados entre modelos e entre execuções diferentes.

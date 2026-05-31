@@ -83,10 +83,10 @@ def process_folder(input_dir: Path, output_dir: Path, model, model_name: str, se
             with open(output_path, "w", encoding="utf-8") as f:
                 json.dump(resultado.model_dump(), f, ensure_ascii=False, indent=2)
 
-            print(f"  ✓ {len(resultado.regras)} regras extraídas → {output_path.name}")
+            print(f"  OK {len(resultado.regras)} regras extraidas -> {output_path.name}")
 
         except Exception as e:
-            print(f"  ✗ Erro ao processar {pdf_path.name}: {e}")
+            print(f"  ERRO ao processar {pdf_path.name}: {e}")
 
     print("\nConcluído.")
 
