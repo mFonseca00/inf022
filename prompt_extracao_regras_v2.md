@@ -127,13 +127,6 @@ Os exemplos abaixo ilustram extrações corretas a partir de documentos reais. U
       "tipo": "condicional",
       "condicao": "Apenas para candidatos do curso subsequente.",
       "referencia": "Item 2.7"
-    },
-    {
-      "id": "R09",
-      "descricao": "Dar entrada no processo de solicitação de emissão de diploma no protocolo do campus.",
-      "tipo": "obrigatória",
-      "condicao": null,
-      "referencia": "Passo 3"
     }
   ]
 }
