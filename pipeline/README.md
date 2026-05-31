@@ -14,7 +14,8 @@ PDFs de entrada
      │
      ▼
 [2] Envio ao LLM (pydantic-ai)
-  ├── System prompt: prompt_extracao_regras_v2.md
+  ├── System prompt: pipeline/prompts/prompt_extracao_regras_v3.md
+  ├── Contexto adicional: PDFs em pipeline/docs_for_prompt_examples/
   └── User message: nome do arquivo + texto extraído
      │
      ▼
@@ -29,9 +30,15 @@ JSONs de saída (um por PDF)
 1. `run.py` varre a pasta de entrada em busca de arquivos `.pdf`, em ordem alfabética.
 2. Para cada PDF, `pdfplumber` extrai o texto de todas as páginas e concatena em uma string.
 3. O texto é enviado ao agente pydantic-ai junto com o nome do arquivo e o `id_arquivo` inferido pelo prefixo numérico do nome (ex: `10_SEI_edital.pdf` → `id_arquivo = "10"`).
-4. O agente usa o conteúdo de `prompt_extracao_regras_v2.md` como system prompt e o texto do documento como mensagem do usuário.
+4. O agente usa o conteúdo de `pipeline/prompts/prompt_extracao_regras_v3.md` como system prompt, lê automaticamente os PDFs de exemplo em `pipeline/docs_for_prompt_examples/` e acrescenta esse material como contexto extra antes do documento atual.
 5. O LLM responde com um JSON estruturado. O pydantic-ai valida automaticamente essa resposta contra o schema `ResultadoExtracao` — se vier malformado, tenta corrigir antes de falhar.
 6. O resultado validado é salvo como `<nome_do_arquivo>.json` na pasta de saída.
+
+### Sobre os parâmetros da LLM no JSON
+
+Os valores salvos em `parametros_llm` refletem os parâmetros que a pipeline conseguiu determinar localmente. Quando o usuário não especifica um parâmetro, o código consegue guardar o valor explícito informado ou `null`.
+
+O `pydantic-ai` não expõe, de forma genérica, os valores padrão internos de cada modelo/provider no objeto `ModelSettings` nem no objeto do modelo. Na prática, isso significa que não dá para garantir automaticamente os defaults reais de todo modelo sem manter uma tabela própria por provider/modelo. Se você quiser, dá para adicionar essa tabela depois para preencher defaults conhecidos e deixar `null` só para o que for realmente desconhecido.
 
 ---
 
@@ -48,7 +55,8 @@ pipeline/
 └── README.md        # Este arquivo
 
 # Fora da pasta pipeline/:
-prompt_extracao_regras_v2.md   # System prompt utilizado pela pipeline
+pipeline/prompts/prompt_extracao_regras_v3.md   # System prompt utilizado pela pipeline
+pipeline/docs_for_prompt_examples/               # PDFs usados como contexto adicional durante a execução
 ```
 
 ---
@@ -249,6 +257,16 @@ Cada PDF gera um arquivo `.json` com o seguinte formato:
   "id_arquivo": "10",
   "modelo": "gemini-2.0-flash",
   "tokens": 3842,
+  "parametros_llm": {
+    "provider": "google",
+    "model": "gemini-2.0-flash",
+    "temperature": 0.0,
+    "max_tokens": 8192,
+    "timeout": 120,
+    "top_p": 0.9,
+    "top_k": 40,
+    "base_url": null
+  },
   "regras": [
     {
       "id": "R01",
@@ -286,9 +304,10 @@ inf022/
 ├── docs/                          # PDFs de entrada (criar manualmente)
 ├── results/                       # JSONs de saída (criado automaticamente)
 ├── pipeline/                      # Código da pipeline
+│   ├── prompts/                   # Prompts usados pela pipeline
+│   └── docs_for_prompt_examples/  # PDFs usados como contexto adicional
 ├── docker-compose.yml             # Ollama via Docker (CPU — padrão)
 ├── docker-compose.gpu.yml         # Override para habilitar GPU NVIDIA
-├── prompt_extracao_regras_v2.md   # System prompt
 ├── exemplos_extracao.xlsx         # Exemplos de extrações validadas
 └── 00_Lista de Resolucoes.xlsx    # Lista de documentos a processar
 ```

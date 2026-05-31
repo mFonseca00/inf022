@@ -28,6 +28,7 @@ from dotenv import load_dotenv
 load_dotenv(Path(__file__).parent / ".env")
 
 from config import get_model, get_model_settings
+from models import ParametrosLLM
 from extractor import extract
 
 
@@ -54,7 +55,15 @@ def make_run_dir(base_output: Path, model_name: str) -> Path:
     return run_dir
 
 
-def process_folder(input_dir: Path, output_dir: Path, model, model_name: str, settings=None):
+def _get_setting_value(settings, key: str):
+    if settings is None:
+        return None
+    if isinstance(settings, dict):
+        return settings.get(key)
+    return getattr(settings, key, None)
+
+
+def process_folder(input_dir: Path, output_dir: Path, model, model_name: str, settings=None, llm_parameters=None):
     run_dir = make_run_dir(output_dir, model_name)
     pdfs = sorted(input_dir.glob("*.pdf"))
 
@@ -77,6 +86,7 @@ def process_folder(input_dir: Path, output_dir: Path, model, model_name: str, se
                 file_id=file_id,
                 model=model,
                 settings=settings,
+                llm_parameters=llm_parameters,
             )
 
             output_path = run_dir / f"{pdf_path.stem}.json"
@@ -106,12 +116,24 @@ def main():
         os.environ["MODEL"] = args.model
 
     model_name = os.getenv("MODEL", "gemini-2.0-flash")
+    provider = os.getenv("PROVIDER", "google").lower()
+    base_url = os.getenv("OLLAMA_BASE_URL") if provider == "ollama" else None
     model = get_model()
     settings = get_model_settings()
+    llm_parameters = ParametrosLLM(
+        provider=provider,
+        model=model_name,
+        temperature=_get_setting_value(settings, "temperature"),
+        max_tokens=_get_setting_value(settings, "max_tokens"),
+        timeout=_get_setting_value(settings, "timeout"),
+        top_p=_get_setting_value(settings, "top_p"),
+        top_k=_get_setting_value(settings, "top_k"),
+        base_url=base_url,
+    )
     input_dir = Path(args.input)
     output_dir = Path(args.output)
 
-    process_folder(input_dir, output_dir, model, model_name, settings)
+    process_folder(input_dir, output_dir, model, model_name, settings, llm_parameters)
 
 
 if __name__ == "__main__":
