@@ -80,7 +80,7 @@ PROVIDER=google
 MODEL=gemini-2.0-flash
 
 # Chaves de API (preencha apenas a do provider escolhido)
-GOOGLE_API_KEY=
+GEMINI_API_KEY=
 ANTHROPIC_API_KEY=
 OPENAI_API_KEY=
 
@@ -110,7 +110,7 @@ Opção recomendada para começar — possui nível gratuito generoso.
 ```env
 PROVIDER=google
 MODEL=gemini-2.0-flash
-GOOGLE_API_KEY=sua_chave_aqui
+GEMINI_API_KEY=sua_chave_aqui
 ```
 
 Obtenha sua chave em: [aistudio.google.com](https://aistudio.google.com/app/apikey)

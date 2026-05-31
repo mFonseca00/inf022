@@ -6,7 +6,7 @@ Para trocar o modelo, basta ajustar as variáveis de ambiente:
   # Google Gemini (gratuito)
   PROVIDER=google
   MODEL=gemini-2.0-flash
-  GOOGLE_API_KEY=sua_chave
+  GEMINI_API_KEY=sua_chave
 
   # Anthropic Claude
   PROVIDER=anthropic

@@ -22,6 +22,10 @@ from datetime import datetime
 from pathlib import Path
 
 import pdfplumber
+from dotenv import load_dotenv
+
+
+load_dotenv(Path(__file__).parent / ".env")
 
 from config import get_model, get_model_settings
 from extractor import extract
