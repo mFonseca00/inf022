@@ -20,7 +20,7 @@ EXAMPLE_FILENAMES = [
 ]
 
 with open(PROMPT_PATH, encoding="utf-8") as f:
-    SYSTEM_PROMPT = f.read()
+    BASE_SYSTEM_PROMPT = f.read()
 
 
 def extract_text_from_pdf(pdf_path: Path) -> str:
@@ -31,11 +31,11 @@ def extract_text_from_pdf(pdf_path: Path) -> str:
     return "\n".join(pages)
 
 
-def build_examples_context(current_filename: str) -> str:
+def build_examples_context(current_filename: str | None = None) -> str:
     example_chunks: list[str] = []
 
     for example_filename in EXAMPLE_FILENAMES:
-        if example_filename == current_filename:
+        if current_filename is not None and example_filename == current_filename:
             continue
 
         example_path = EXAMPLES_DIR / example_filename
@@ -54,7 +54,21 @@ def build_examples_context(current_filename: str) -> str:
     if not example_chunks:
         return ""
 
-    return "\n\n".join(example_chunks)
+    return (
+        "## EXEMPLOS COMPLETOS (PDFs DE REFERÊNCIA)\n\n"
+        "Os documentos abaixo são carregados integralmente pela pipeline e devem ser usados como referência fixa de comparação.\n\n"
+        + "\n\n---\n\n".join(example_chunks)
+        + "\n\n## INSTRUÇÃO FINAL\n\n"
+        "Agora processe apenas o documento atual seguindo as instruções acima e os padrões demonstrados nos exemplos."
+        "Retorne apenas o JSON, sem texto adicional antes ou depois.\n"
+    )
+
+
+EXAMPLES_CONTEXT = build_examples_context()
+SYSTEM_PROMPT = (
+    BASE_SYSTEM_PROMPT.rstrip()
+    + ("\n\n" + EXAMPLES_CONTEXT if EXAMPLES_CONTEXT else "")
+)
 
 
 def build_agent(model, settings: ModelSettings | None = None) -> Agent:
@@ -88,25 +102,15 @@ def extract(
     """
     agent = build_agent(model, settings)
 
-    examples_context = build_examples_context(filename)
-
     user_message = (
         f"Arquivo: {filename}\n"
         f"ID do arquivo: {file_id}\n\n"
         f"{text}"
     )
 
-    if examples_context:
-        user_message = (
-            f"{examples_context}\n\n"
-            f"---\n\n"
-            f"Documento atual:\n"
-            f"{user_message}"
-        )
-
+    prompt_utilizado = PROMPT_PATH.name
     result = agent.run_sync(user_message)
 
-    # Garante que os campos de metadados estão preenchidos
     resultado = result.output
     resultado.arquivo = filename
     resultado.id_arquivo = file_id
@@ -115,5 +119,6 @@ def extract(
     usage = result.usage
     resultado.tokens = usage.total_tokens if usage else None
     resultado.parametros_llm = llm_parameters
+    resultado.prompt_utilizado = prompt_utilizado
 
     return resultado

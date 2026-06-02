@@ -504,7 +504,3 @@ Os exemplos abaixo ilustram extrações corretas a partir de documentos reais. U
 ```
 
 ---
-
-## INSTRUÇÃO FINAL
-
-Agora processe o documento fornecido seguindo as instruções acima e os padrões demonstrados nos exemplos. Retorne apenas o JSON, sem texto adicional antes ou depois.

@@ -28,4 +28,5 @@ class ResultadoExtracao(BaseModel):
     modelo: str
     tokens: Optional[int]
     parametros_llm: Optional[ParametrosLLM] = None
+    prompt_utilizado: Optional[str] = None
     regras: list[Regra]

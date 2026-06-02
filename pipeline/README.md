@@ -15,8 +15,8 @@ PDFs de entrada
      ▼
 [2] Envio ao LLM (pydantic-ai)
   ├── System prompt: pipeline/prompts/prompt_extracao_regras_v3.md
-  ├── Contexto adicional: PDFs em pipeline/docs_for_prompt_examples/
-  └── User message: nome do arquivo + texto extraído
+  ├── Contexto fixo: PDFs completos em pipeline/docs_for_prompt_examples/
+  └── User message: nome do arquivo + id + texto extraído do PDF atual
      │
      ▼
 [3] Validação da saída (Pydantic)
@@ -30,9 +30,10 @@ JSONs de saída (um por PDF)
 1. `run.py` varre a pasta de entrada em busca de arquivos `.pdf`, em ordem alfabética.
 2. Para cada PDF, `pdfplumber` extrai o texto de todas as páginas e concatena em uma string.
 3. O texto é enviado ao agente pydantic-ai junto com o nome do arquivo e o `id_arquivo` inferido pelo prefixo numérico do nome (ex: `10_SEI_edital.pdf` → `id_arquivo = "10"`).
-4. O agente usa o conteúdo de `pipeline/prompts/prompt_extracao_regras_v3.md` como system prompt, lê automaticamente os PDFs de exemplo em `pipeline/docs_for_prompt_examples/` e acrescenta esse material como contexto extra antes do documento atual.
-5. O LLM responde com um JSON estruturado. O pydantic-ai valida automaticamente essa resposta contra o schema `ResultadoExtracao` — se vier malformado, tenta corrigir antes de falhar.
-6. O resultado validado é salvo como `<nome_do_arquivo>.json` na pasta de saída.
+4. O agente usa o conteúdo de `pipeline/prompts/prompt_extracao_regras_v3.md` como system prompt e concatena a ele os PDFs completos de exemplo em `pipeline/docs_for_prompt_examples/`, que funcionam como referência fixa de comparação.
+5. A `user_message` contém apenas o arquivo atual: nome do arquivo, `id_arquivo` e o texto extraído do PDF.
+6. O LLM responde com um JSON estruturado. O pydantic-ai valida automaticamente essa resposta contra o schema `ResultadoExtracao` — se vier malformado, tenta corrigir antes de falhar.
+7. O resultado validado é salvo como `<nome_do_arquivo>.json` na pasta de saída.
 
 ### Sobre os parâmetros da LLM no JSON
 
@@ -56,7 +57,7 @@ pipeline/
 
 # Fora da pasta pipeline/:
 pipeline/prompts/prompt_extracao_regras_v3.md   # System prompt utilizado pela pipeline
-pipeline/docs_for_prompt_examples/               # PDFs usados como contexto adicional durante a execução
+pipeline/docs_for_prompt_examples/               # PDFs completos usados como exemplos fixos no system prompt
 ```
 
 ---
@@ -257,6 +258,7 @@ Cada PDF gera um arquivo `.json` com o seguinte formato:
   "id_arquivo": "10",
   "modelo": "gemini-2.0-flash",
   "tokens": 3842,
+  "prompt_utilizado": "prompt_extracao_regras_v3.md",
   "parametros_llm": {
     "provider": "google",
     "model": "gemini-2.0-flash",
@@ -305,7 +307,7 @@ inf022/
 ├── results/                       # JSONs de saída (criado automaticamente)
 ├── pipeline/                      # Código da pipeline
 │   ├── prompts/                   # Prompts usados pela pipeline
-│   └── docs_for_prompt_examples/  # PDFs usados como contexto adicional
+│   └── docs_for_prompt_examples/  # PDFs completos usados como exemplos fixos
 ├── docker-compose.yml             # Ollama via Docker (CPU — padrão)
 ├── docker-compose.gpu.yml         # Override para habilitar GPU NVIDIA
 ├── exemplos_extracao.xlsx         # Exemplos de extrações validadas
