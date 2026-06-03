@@ -1,3 +1,4 @@
 pydantic-ai[google,anthropic,openai]
 pdfplumber
 python-dotenv
+openpyxl

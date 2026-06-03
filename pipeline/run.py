@@ -30,6 +30,7 @@ load_dotenv(Path(__file__).parent / ".env")
 from config import get_model, get_model_settings
 from models import ParametrosLLM
 from extractor import extract
+from evaluate import run_evaluation
 
 
 def extract_text_from_pdf(pdf_path: Path) -> str:
@@ -63,7 +64,7 @@ def _get_setting_value(settings, key: str):
     return getattr(settings, key, None)
 
 
-def process_folder(input_dir: Path, output_dir: Path, model, model_name: str, settings=None, llm_parameters=None):
+def process_folder(input_dir: Path, output_dir: Path, model, model_name: str, settings=None, llm_parameters=None, evaluate: bool = False):
     run_dir = make_run_dir(output_dir, model_name)
     pdfs = sorted(input_dir.glob("*.pdf"))
 
@@ -98,15 +99,20 @@ def process_folder(input_dir: Path, output_dir: Path, model, model_name: str, se
         except Exception as e:
             print(f"  ERRO ao processar {pdf_path.name}: {e}")
 
-    print("\nConcluído.")
+    print("\nConcluido.")
+
+    if evaluate:
+        print()
+        run_evaluation(run_dir)
 
 
 def main():
     parser = argparse.ArgumentParser(description="Pipeline de extração de regras institucionais")
     parser.add_argument("--input", required=True, help="Pasta com os PDFs de entrada")
     parser.add_argument("--output", required=True, help="Pasta base onde as subpastas de execução serão criadas")
-    parser.add_argument("--provider", help="Provider (google, anthropic, openai, ollama) — sobrepõe PROVIDER do .env")
-    parser.add_argument("--model", help="Nome do modelo — sobrepõe MODEL do .env")
+    parser.add_argument("--provider", help="Provider (google, anthropic, openai, ollama) — sobrepoem PROVIDER do .env")
+    parser.add_argument("--model", help="Nome do modelo — sobrepoem MODEL do .env")
+    parser.add_argument("--evaluate", action="store_true", help="Executa a avaliacao automaticamente apos a extracao")
     args = parser.parse_args()
 
     # Argumentos de CLI têm prioridade sobre variáveis de ambiente
@@ -133,7 +139,7 @@ def main():
     input_dir = Path(args.input)
     output_dir = Path(args.output)
 
-    process_folder(input_dir, output_dir, model, model_name, settings, llm_parameters)
+    process_folder(input_dir, output_dir, model, model_name, settings, llm_parameters, evaluate=args.evaluate)
 
 
 if __name__ == "__main__":

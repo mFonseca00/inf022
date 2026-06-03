@@ -46,6 +46,7 @@ pipeline/
 ├── config.py        # Seleção de provider e modelo via variáveis de ambiente
 ├── extractor.py     # Agente pydantic-ai responsável pela extração
 ├── run.py           # Entry point com interface de linha de comando (CLI)
+├── evaluate.py      # Avaliador: compara JSONs gerados com a planilha de referência
 ├── requirements.txt # Dependências Python
 ├── .env.example     # Modelo do arquivo de configuração
 └── README.md        # Este arquivo
@@ -209,9 +210,25 @@ python run.py --input ../docs --output ../results
 # (tem prioridade sobre o .env)
 python run.py --input ../docs --output ../results --provider ollama --model llama3.2
 python run.py --input ../docs --output ../results --provider google --model gemini-2.0-flash
+
+# Com avaliação automática ao final (requer extracoes_manuais_validadas.xlsx)
+python run.py --input ../docs --output ../results --evaluate
 ```
 
-Os argumentos `--provider` e `--model` são opcionais. Se omitidos, a pipeline usa o que estiver definido no `.env`.
+Os argumentos `--provider`, `--model` e `--evaluate` são opcionais. Se omitidos, a pipeline usa o que estiver definido no `.env` e não executa a avaliação.
+
+### Avaliação em separado
+
+O avaliador pode ser executado independentemente sobre qualquer pasta de resultados já existente:
+
+```bash
+python evaluate.py --results ../results/2025-06-01_14-32-05_gemini-2.0-flash
+
+# Apontando para uma planilha em caminho diferente do padrão
+python evaluate.py --results ../results/2025-06-01_14-32-05_gemini-2.0-flash --spreadsheet /outro/caminho/planilha.xlsx
+```
+
+O avaliador compara cada regra extraída com as extrações manuais da planilha e salva `_avaliacao.json` na mesma pasta com o percentual de confiabilidade por arquivo e o total de tokens gastos na extração. Não usa LLM — a comparação é puramente algorítmica, sem custo de API.
 
 Cada execução cria automaticamente uma subpasta dentro de `--output` com o timestamp e o nome do modelo, por exemplo:
 
@@ -253,7 +270,7 @@ Cada PDF gera um arquivo `.json` com o seguinte formato:
   "id_arquivo": "10",
   "modelo": "gemini-2.0-flash",
   "tokens": 3842,
-  "prompt_utilizado": "prompt_extracao_regras_v3.md",
+  "prompt_utilizado": "prompt_extracao_regras_v4.md",
   "parametros_llm": {
     "provider": "google",
     "model": "gemini-2.0-flash",
@@ -291,6 +308,93 @@ Cada PDF gera um arquivo `.json` com o seguinte formato:
 | `opcional` | Item que pode ou não ser apresentado, a critério do candidato |
 | `restritiva` | Condição que impede ou veda a participação |
 | `condicional` | Requisito que só se aplica se uma determinada condição for verdadeira |
+
+### Formato do `_avaliacao.json`
+
+Gerado pelo `evaluate.py` dentro da mesma pasta dos JSONs individuais:
+
+```json
+{
+  "resumo": {
+    "total_arquivos_avaliados": 5,
+    "total_sem_referencia": 0,
+    "total_regras_extraidas": 97,
+    "total_encontradas_na_referencia": 46,
+    "percentual_confiabilidade": 47,
+    "total_tokens_extracao": 208195,
+    "threshold_match": 0.5
+  },
+  "avaliacoes": [
+    {
+      "arquivo": "10_SEI_4282227_Edital_18_2025.pdf",
+      "id_arquivo": "10",
+      "modelo": "gemini-flash-latest",
+      "tokens_extracao": 44056,
+      "status": "avaliado",
+      "percentual_confiabilidade": 40,
+      "contagem": {
+        "regras_extraidas": 15,
+        "referencia_media_linhas": 27.0,
+        "encontradas_na_referencia": 6,
+        "nao_encontradas_na_referencia": 9,
+        "threshold_match": 0.5
+      },
+      "referencia": {
+        "nome_documento": "EDITAL DE APOIO A CONCESSÃO DE DIÁRIAS E PASSAGENS",
+        "n_extratores": 2,
+        "contagens_por_extrator": [27, 27]
+      },
+      "regras": [
+        {
+          "id": "R01",
+          "descricao": "Ser servidor/a efetivo/a do IFBA...",
+          "tipo": "obrigatória",
+          "encontrada_na_referencia": true,
+          "melhor_score": 0.72,
+          "scores_por_extrator": [0.72, 0.71]
+        }
+      ]
+    }
+  ]
+}
+```
+
+**Campos relevantes:**
+
+- `percentual_confiabilidade`: percentual de regras extraídas que foram encontradas na referência manual (`encontradas / extraidas * 100`)
+- `tokens_extracao`: total de tokens gastos pela LLM para extrair aquele documento (lido do JSON de extração — não há custo de tokens na avaliação em si)
+- `melhor_score`: maior score Jaccard obtido entre a regra e qualquer linha de qualquer extrator manual
+- `threshold_match`: score mínimo para considerar uma regra como "encontrada" (atualmente `0.2`, ajustável em `evaluate.py`)
+
+**Como funciona o cálculo (Jaccard):**
+
+O avaliador não usa LLM — compara textos por sobreposição de palavras. Para cada regra extraída, o algoritmo:
+
+1. Normaliza os textos: converte para minúsculas, remove acentos e pontuação
+2. Divide o texto de referência da planilha em linhas (cada linha é um item da extração manual)
+3. Para cada linha, calcula o **índice de Jaccard** entre os tokens da regra e os tokens da linha:
+
+```
+score = |tokens em comum| / |todos os tokens únicos dos dois textos|
+```
+
+Exemplo:
+```
+Regra:     "Estar em dia com as obrigacoes eleitorais"
+           tokens = {estar, em, dia, com, as, obrigacoes, eleitorais}  → 7 tokens
+
+Referencia: "Estudantes que estejam em dia com as obrigacoes eleitorais quando maior de 18 anos"
+           tokens = {estudantes, que, estejam, em, dia, com, as, obrigacoes, eleitorais, quando, maior, de, 18, anos}  → 14 tokens
+
+Intersecao = {em, dia, com, as, obrigacoes, eleitorais} → 6
+Uniao      = 15 tokens no total
+
+score = 6 / 15 = 0.40
+```
+
+O maior score entre todas as linhas e todos os extratores vira `melhor_score`. Se esse valor for maior ou igual ao `threshold_match`, a regra é marcada como `encontrada_na_referencia: true`.
+
+> **Limitação:** o Jaccard não reconhece sinônimos nem paráfrases — `estar` e `estejam` são palavras distintas para o algoritmo. Regras que o LLM reformulou muito podem ter score baixo mesmo estando corretas. O campo `melhor_score` no JSON permite inspecionar esses casos borderline.
 
 ---
 
