@@ -1,0 +1,72 @@
+{
+  "arquivo": "02_Edital_n_C2_BA_13_2024_Estagio_versao_final_assina_240905_230648.pdf",
+  "id_arquivo": "02",
+  "modelo": "exemplo-validado",
+  "tokens": null,
+  "parametros_llm": null,
+  "regras": [
+    {
+      "id": "R01",
+      "descricao": "Ser estudante de nível de graduação, regularmente matriculado em instituição de ensino superior (pública ou privada) reconhecida pelo MEC, com frequência efetiva na área da vaga.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 2.1"
+    },
+    {
+      "id": "R02",
+      "descricao": "Ser brasileiro ou estrangeiro com visto de permanência no país.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 2.2"
+    },
+    {
+      "id": "R03",
+      "descricao": "Estar em dia com as obrigações eleitorais.",
+      "tipo": "condicional",
+      "condicao": "Apenas para candidatos maiores de 18 anos.",
+      "referencia": "Item 2.3"
+    },
+    {
+      "id": "R04",
+      "descricao": "Estar em dia com as obrigações militares.",
+      "tipo": "condicional",
+      "condicao": "Apenas para candidatos do sexo masculino maiores de 18 anos.",
+      "referencia": "Item 2.3"
+    },
+    {
+      "id": "R05",
+      "descricao": "Não ter realizado estágio por período igual ou superior a dois anos em órgãos e entidades da Administração Pública federal, direta, autárquica e fundacional. É permitido acumular o período de dois anos para cada nível de escolaridade (médio e superior).",
+      "tipo": "restritiva",
+      "condicao": null,
+      "referencia": "Item 2.4 e Art. 11 da Lei nº 11.788/08"
+    },
+    {
+      "id": "R06",
+      "descricao": "Ter idade mínima de 16 anos completos na data de início do estágio.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 2.5 e §5º do Art. 7º da Resolução nº 1 do CNE/CEB"
+    },
+    {
+      "id": "R07",
+      "descricao": "Estar regularmente matriculado e frequentando um dos cursos listados no Anexo 1 — Quadro de Vagas.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 3.2"
+    },
+    {
+      "id": "R08",
+      "descricao": "Estar cursando, no mínimo, o período acadêmico especificado para a vaga no Anexo 1.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 3.2.1"
+    },
+    {
+      "id": "R09",
+      "descricao": "Ter disponibilidade de 4 horas diárias para cumprir o estágio, totalizando 20 horas semanais.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 3.2.2"
+    }
+  ]
+}

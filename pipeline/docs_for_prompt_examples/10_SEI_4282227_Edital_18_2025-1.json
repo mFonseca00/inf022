@@ -1,0 +1,100 @@
+{
+  "arquivo": "10_SEI_4282227_Edital_18_2025.pdf",
+  "id_arquivo": "10",
+  "modelo": "exemplo-validado",
+  "tokens": null,
+  "parametros_llm": null,
+  "regras": [
+    {
+      "id": "R01",
+      "descricao": "Ser servidor/a efetivo/a do IFBA — Campus Salvador (docente ou técnico-administrativo) e estar em pleno exercício na data de realização do evento.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 1.2"
+    },
+    {
+      "id": "R02",
+      "descricao": "Não estar em gozo de férias no momento da participação no evento.",
+      "tipo": "restritiva",
+      "condicao": null,
+      "referencia": "Item 1.3.1"
+    },
+    {
+      "id": "R03",
+      "descricao": "Não estar usufruindo de qualquer tipo de licença ou afastamento no momento da participação no evento.",
+      "tipo": "restritiva",
+      "condicao": null,
+      "referencia": "Item 1.3.2"
+    },
+    {
+      "id": "R04",
+      "descricao": "Não ter sua lotação alterada no momento da participação no evento.",
+      "tipo": "restritiva",
+      "condicao": null,
+      "referencia": "Item 1.3.3"
+    },
+    {
+      "id": "R05",
+      "descricao": "Abrir processo SEI do tipo SOLICITAÇÃO DE DIÁRIAS E PASSAGENS e encaminhá-lo à unidade COM.PERM.EVENTOS/CURSOS.SSA dentro do prazo do cronograma.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 2.3"
+    },
+    {
+      "id": "R06",
+      "descricao": "Incluir no processo SEI o Formulário SOLICITAÇÃO DE DIÁRIAS E PASSAGENS devidamente preenchido e assinado.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 2.3 — I"
+    },
+    {
+      "id": "R07",
+      "descricao": "Incluir no processo SEI o trabalho a ser apresentado no evento.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 2.3 — II"
+    },
+    {
+      "id": "R08",
+      "descricao": "Incluir no processo SEI a carta de aprovação do trabalho pela organização do evento. Em caso de olimpíadas e/ou competições, apresentar credencial ou documento que ateste a seleção do/a estudante.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 2.3 — III"
+    },
+    {
+      "id": "R09",
+      "descricao": "A carta de aprovação do trabalho pode ser entregue após o encerramento das inscrições, desde que apresentada antes do recebimento do auxílio.",
+      "tipo": "condicional",
+      "condicao": "Apenas quando o servidor ainda não tiver recebido a carta de aprovação no momento da submissão.",
+      "referencia": "Itens 2.3.1 e 2.3.1.1"
+    },
+    {
+      "id": "R10",
+      "descricao": "Incluir no processo SEI a descrição detalhada de gastos, especificando a natureza das despesas e respeitando o limite orçamentário previsto no edital.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 2.3 — IV"
+    },
+    {
+      "id": "R11",
+      "descricao": "Incluir no processo SEI a declaração de anuência da chefia imediata para participação.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 2.3 — V"
+    },
+    {
+      "id": "R12",
+      "descricao": "Para trabalhos elaborados por mais de um/a autor/a, apenas um/a poderá solicitar o apoio por este edital.",
+      "tipo": "restritiva",
+      "condicao": null,
+      "referencia": "Item 2.4"
+    },
+    {
+      "id": "R13",
+      "descricao": "Cada servidor/a só poderá ser contemplado/a uma vez neste edital.",
+      "tipo": "restritiva",
+      "condicao": null,
+      "referencia": "Item 2.6"
+    }
+  ]
+}

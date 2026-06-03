@@ -3,14 +3,14 @@ Extrator de regras usando pydantic-ai.
 Recebe o texto de um documento e retorna um ResultadoExtracao validado.
 """
 
+import json
 from pathlib import Path
 from pydantic_ai import Agent
 from pydantic_ai.settings import ModelSettings
 
 from models import ParametrosLLM, ResultadoExtracao
 
-# Carrega o system prompt a partir do arquivo de prompt dentro da pasta prompts
-PROMPT_PATH = Path(__file__).parent / "prompts" / "prompt_extracao_regras_v3.md"
+PROMPT_PATH = Path(__file__).parent / "prompts" / "prompt_extracao_regras_v4.md"
 EXAMPLES_DIR = Path(__file__).parent / "docs_for_prompt_examples"
 EXAMPLE_FILENAMES = [
     "01_documento_orientador_emissao_de_diploma-ensino_medio-ifba.pdf",
@@ -31,35 +31,38 @@ def extract_text_from_pdf(pdf_path: Path) -> str:
     return "\n".join(pages)
 
 
-def build_examples_context(current_filename: str | None = None) -> str:
+def build_examples_context() -> str:
     example_chunks: list[str] = []
 
-    for example_filename in EXAMPLE_FILENAMES:
-        if current_filename is not None and example_filename == current_filename:
+    for i, example_filename in enumerate(EXAMPLE_FILENAMES, start=1):
+        pdf_path = EXAMPLES_DIR / example_filename
+        json_path = EXAMPLES_DIR / (Path(example_filename).stem + ".json")
+
+        if not pdf_path.exists() or not json_path.exists():
             continue
 
-        example_path = EXAMPLES_DIR / example_filename
-        if not example_path.exists():
+        pdf_text = extract_text_from_pdf(pdf_path).strip()
+        if not pdf_text:
             continue
 
-        example_text = extract_text_from_pdf(example_path).strip()
-        if not example_text:
-            continue
+        with open(json_path, encoding="utf-8") as f:
+            expected_json = json.load(f)
 
         example_chunks.append(
-            f"### Exemplo de contexto: {example_filename}\n"
-            f"{example_text}"
+            f"### Exemplo {i}: {example_filename}\n\n"
+            f"**Texto do documento:**\n\n"
+            f"{pdf_text}\n\n"
+            f"**Extração esperada:**\n\n"
+            f"```json\n{json.dumps(expected_json, ensure_ascii=False, indent=2)}\n```"
         )
 
     if not example_chunks:
         return ""
 
     return (
-        "## EXEMPLOS COMPLETOS (PDFs DE REFERÊNCIA)\n\n"
-        "Os documentos abaixo são carregados integralmente pela pipeline e devem ser usados como referência fixa de comparação.\n\n"
-        + "\n\n---\n\n".join(example_chunks)
-        + "\n\n## INSTRUÇÃO FINAL\n\n"
-        "Agora processe apenas o documento atual seguindo as instruções acima e os padrões demonstrados nos exemplos."
+        "\n\n---\n\n".join(example_chunks)
+        + "\n\n---\n\n"
+        "Agora processe apenas o documento atual seguindo as instruções acima e os padrões demonstrados nos exemplos. "
         "Retorne apenas o JSON, sem texto adicional antes ou depois.\n"
     )
 

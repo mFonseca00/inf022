@@ -14,8 +14,9 @@ PDFs de entrada
      │
      ▼
 [2] Envio ao LLM (pydantic-ai)
-  ├── System prompt: pipeline/prompts/prompt_extracao_regras_v3.md
-  ├── Contexto fixo: PDFs completos em pipeline/docs_for_prompt_examples/
+  ├── System prompt: pipeline/prompts/prompt_extracao_regras_v4.md
+  ├── Exemplos few-shot: pares (texto do PDF + JSON esperado) montados a partir de
+  │     pipeline/docs_for_prompt_examples/*.pdf  +  *.json
   └── User message: nome do arquivo + id + texto extraído do PDF atual
      │
      ▼
@@ -30,16 +31,10 @@ JSONs de saída (um por PDF)
 1. `run.py` varre a pasta de entrada em busca de arquivos `.pdf`, em ordem alfabética.
 2. Para cada PDF, `pdfplumber` extrai o texto de todas as páginas e concatena em uma string.
 3. O texto é enviado ao agente pydantic-ai junto com o nome do arquivo e o `id_arquivo` inferido pelo prefixo numérico do nome (ex: `10_SEI_edital.pdf` → `id_arquivo = "10"`).
-4. O agente usa o conteúdo de `pipeline/prompts/prompt_extracao_regras_v3.md` como system prompt e concatena a ele os PDFs completos de exemplo em `pipeline/docs_for_prompt_examples/`, que funcionam como referência fixa de comparação.
+4. O agente usa o conteúdo de `pipeline/prompts/prompt_extracao_regras_v4.md` como system prompt. A ele são concatenados os exemplos few-shot, montados dinamicamente pela pipeline: para cada arquivo em `docs_for_prompt_examples/`, o texto extraído do PDF é pareado com o JSON de extração validada (arquivo `.json` de mesmo nome), formando pares **texto do documento → extração esperada** lado a lado.
 5. A `user_message` contém apenas o arquivo atual: nome do arquivo, `id_arquivo` e o texto extraído do PDF.
 6. O LLM responde com um JSON estruturado. O pydantic-ai valida automaticamente essa resposta contra o schema `ResultadoExtracao` — se vier malformado, tenta corrigir antes de falhar.
 7. O resultado validado é salvo como `<nome_do_arquivo>.json` na pasta de saída.
-
-### Sobre os parâmetros da LLM no JSON
-
-Os valores salvos em `parametros_llm` refletem os parâmetros que a pipeline conseguiu determinar localmente. Quando o usuário não especifica um parâmetro, o código consegue guardar o valor explícito informado ou `null`.
-
-O `pydantic-ai` não expõe, de forma genérica, os valores padrão internos de cada modelo/provider no objeto `ModelSettings` nem no objeto do modelo. Na prática, isso significa que não dá para garantir automaticamente os defaults reais de todo modelo sem manter uma tabela própria por provider/modelo. Se você quiser, dá para adicionar essa tabela depois para preencher defaults conhecidos e deixar `null` só para o que for realmente desconhecido.
 
 ---
 
@@ -56,8 +51,8 @@ pipeline/
 └── README.md        # Este arquivo
 
 # Fora da pasta pipeline/:
-pipeline/prompts/prompt_extracao_regras_v3.md   # System prompt utilizado pela pipeline
-pipeline/docs_for_prompt_examples/               # PDFs completos usados como exemplos fixos no system prompt
+pipeline/prompts/prompt_extracao_regras_v4.md   # System prompt utilizado pela pipeline
+pipeline/docs_for_prompt_examples/               # Exemplos few-shot: um .pdf + um .json por exemplo
 ```
 
 ---
@@ -307,10 +302,10 @@ inf022/
 ├── results/                       # JSONs de saída (criado automaticamente)
 ├── pipeline/                      # Código da pipeline
 │   ├── prompts/                   # Prompts usados pela pipeline
-│   └── docs_for_prompt_examples/  # PDFs completos usados como exemplos fixos
+│   └── docs_for_prompt_examples/  # Exemplos few-shot: um .pdf + um .json por exemplo
 ├── docker-compose.yml             # Ollama via Docker (CPU — padrão)
 ├── docker-compose.gpu.yml         # Override para habilitar GPU NVIDIA
-├── exemplos_extracao.xlsx         # Exemplos de extrações validadas
+├── exemplos_extracao.xlsx         # Fonte das extrações validadas usadas nos exemplos
 └── 00_Lista de Resolucoes.xlsx    # Lista de documentos a processar
 ```
 
