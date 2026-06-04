@@ -498,7 +498,22 @@ Os exemplos abaixo ilustram extrações corretas a partir de documentos reais. U
       "tipo": "condicional",
       "condicao": "Apenas para candidatos com deficiência.",
       "referencia": "Item 4.2 (j)"
+    },
+    {
+      "id": "R21",
+      "descricao": "Enviar termo de compromisso, preenchido e assinado pelo candidato habilitado e pelo professor orientador da monitoria.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 8.1.1 (a)"
+    },
+    {
+      "id": "R22",
+      "descricao": "Enviar dados bancários (Banco, Agência e Conta Corrente/Poupança) para depósito da bolsa. Não pode ser conta conjunta, nem conta salário",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 8.1.1 (b)"
     }
+
   ]
 }
 ```
