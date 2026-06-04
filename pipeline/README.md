@@ -316,42 +316,74 @@ Gerado pelo `evaluate.py` dentro da mesma pasta dos JSONs individuais:
 ```json
 {
   "resumo": {
-    "total_arquivos_avaliados": 5,
+    "total_arquivos_avaliados": 4,
     "total_sem_referencia": 0,
-    "total_regras_extraidas": 97,
-    "total_encontradas_na_referencia": 46,
-    "percentual_confiabilidade": 47,
-    "total_tokens_extracao": 208195,
-    "threshold_match": 0.5
+    "total_regras_extraidas": 70,
+    "total_regras_referencia": 52,
+    "total_encontradas_na_referencia": 66,
+    "total_referencia_cobertas": 52,
+    "precisao": 0.943,
+    "revocacao": 1.0,
+    "f1": 0.971,
+    "total_tokens_extracao": 168749,
+    "threshold_match": 0.2
   },
   "avaliacoes": [
     {
       "arquivo": "10_SEI_4282227_Edital_18_2025.pdf",
       "id_arquivo": "10",
       "modelo": "gemini-flash-latest",
-      "tokens_extracao": 44056,
+      "tokens_extracao": 39878,
       "status": "avaliado",
-      "percentual_confiabilidade": 40,
+      "metricas": {
+        "precisao": 0.8,
+        "revocacao": 1.0,
+        "f1": 0.889,
+        "threshold_match": 0.2
+      },
       "contagem": {
         "regras_extraidas": 15,
-        "referencia_media_linhas": 27.0,
-        "encontradas_na_referencia": 6,
-        "nao_encontradas_na_referencia": 9,
-        "threshold_match": 0.5
+        "regras_na_referencia": 13,
+        "encontradas_na_referencia": 12,
+        "nao_encontradas_na_referencia": 3,
+        "referencia_cobertas": 13,
+        "referencia_nao_cobertas": 0
       },
       "referencia": {
-        "nome_documento": "EDITAL DE APOIO A CONCESSÃO DE DIÁRIAS E PASSAGENS",
-        "n_extratores": 2,
-        "contagens_por_extrator": [27, 27]
+        "nome_documento": "EDITAL DE APOIO A CONCESSÃO DE DIÁRIAS E PASSAGENS"
       },
       "regras": [
         {
           "id": "R01",
           "descricao": "Ser servidor/a efetivo/a do IFBA...",
           "tipo": "obrigatória",
+          "condicao": null,
           "encontrada_na_referencia": true,
-          "melhor_score": 0.72,
-          "scores_por_extrator": [0.72, 0.71]
+          "melhor_score_combinado": 1.0,
+          "score_descricao": 1.0,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        }
+      ],
+      "fora_da_referencia": [
+        {
+          "id": "R14",
+          "descricao": "Regra extraída que não tem correspondente na planilha...",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.08,
+          "score_descricao": 0.04,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        }
+      ],
+      "referencia_nao_coberta": [
+        {
+          "descricao": "Regra da planilha que o modelo não extraiu...",
+          "tipo": "restritiva",
+          "condicao": null,
+          "melhor_score_combinado": 0.05
         }
       ]
     }
@@ -359,42 +391,43 @@ Gerado pelo `evaluate.py` dentro da mesma pasta dos JSONs individuais:
 }
 ```
 
-**Campos relevantes:**
+**Métricas calculadas:**
 
-- `percentual_confiabilidade`: percentual de regras extraídas que foram encontradas na referência manual (`encontradas / extraidas * 100`)
-- `tokens_extracao`: total de tokens gastos pela LLM para extrair aquele documento (lido do JSON de extração — não há custo de tokens na avaliação em si)
-- `melhor_score`: maior score Jaccard obtido entre a regra e qualquer linha de qualquer extrator manual
-- `threshold_match`: score mínimo para considerar uma regra como "encontrada" (atualmente `0.2`, ajustável em `evaluate.py`)
+O avaliador computa três métricas complementares por documento e no resumo geral:
 
-**Como funciona o cálculo (Jaccard):**
+| Métrica | Fórmula | Pergunta respondida |
+|---------|---------|---------------------|
+| **Precisão** | `encontradas_na_referencia / regras_extraidas` | Das regras que o modelo extraiu, quantas existem na referência? |
+| **Revocação** | `referencia_cobertas / regras_na_referencia` | Das regras da referência, quantas o modelo capturou? |
+| **F1** | `2 × P × R / (P + R)` | Nota única que equilibra as duas métricas anteriores — penaliza tanto extrair regras erradas quanto deixar regras passar |
 
-O avaliador não usa LLM — compara textos por sobreposição de palavras. Para cada regra extraída, o algoritmo:
+Precisão e revocação se comportam de forma oposta: um modelo que extrai poucas regras mas sempre certas tem precisão alta e revocação baixa; um modelo que extrai tudo que existe (e mais) tem revocação alta e precisão baixa. O F1 é a média harmônica entre as duas — sobe apenas quando ambas estão boas ao mesmo tempo. O nome vem da literatura de recuperação de informação (F-score com β=1, ou seja, peso igual para precisão e revocação).
 
-1. Normaliza os textos: converte para minúsculas, remove acentos e pontuação
-2. Divide o texto de referência da planilha em linhas (cada linha é um item da extração manual)
-3. Para cada linha, calcula o **índice de Jaccard** entre os tokens da regra e os tokens da linha:
+**Campos de diagnóstico por arquivo:**
+
+- `fora_da_referencia`: regras extraídas que **não** encontraram match na referência — indica o que o modelo inventou ou subdividiu em excesso
+- `referencia_nao_coberta`: regras da planilha que **não** foram cobertas por nenhuma regra extraída — indica o que o modelo deixou passar
+- `melhor_score_combinado`: score composto do melhor match encontrado (ver cálculo abaixo)
+- `score_descricao`, `score_tipo`, `score_condicao`: sub-scores individuais para diagnóstico de casos borderline
+- `threshold_match`: score mínimo para considerar um match válido (atualmente `0.2`, ajustável em `evaluate.py`)
+
+**Como funciona o cálculo (score composto):**
+
+O avaliador não usa LLM — compara estruturalmente cada regra extraída com cada regra da planilha. Para cada par, calcula um **score composto** com pesos por campo:
+
+| Campo | Peso | Método |
+|-------|------|--------|
+| `descricao` | 60% | Jaccard sobre tokens normalizados |
+| `tipo` | 20% | Match exato após normalização (`obrigatória`, `restritiva`, etc.) |
+| `condicao` | 20% | Jaccard se ambos preenchidos; 1.0 se ambos `null`; 0.0 se só um é `null` |
 
 ```
-score = |tokens em comum| / |todos os tokens únicos dos dois textos|
+score_combinado = 0.6 × score_descricao + 0.2 × score_tipo + 0.2 × score_condicao
 ```
 
-Exemplo:
-```
-Regra:     "Estar em dia com as obrigacoes eleitorais"
-           tokens = {estar, em, dia, com, as, obrigacoes, eleitorais}  → 7 tokens
+O maior `score_combinado` obtido contra qualquer regra de referência vira `melhor_score_combinado`. Se esse valor for ≥ `threshold_match`, a regra é marcada como encontrada (para precisão) ou coberta (para revocação).
 
-Referencia: "Estudantes que estejam em dia com as obrigacoes eleitorais quando maior de 18 anos"
-           tokens = {estudantes, que, estejam, em, dia, com, as, obrigacoes, eleitorais, quando, maior, de, 18, anos}  → 14 tokens
-
-Intersecao = {em, dia, com, as, obrigacoes, eleitorais} → 6
-Uniao      = 15 tokens no total
-
-score = 6 / 15 = 0.40
-```
-
-O maior score entre todas as linhas e todos os extratores vira `melhor_score`. Se esse valor for maior ou igual ao `threshold_match`, a regra é marcada como `encontrada_na_referencia: true`.
-
-> **Limitação:** o Jaccard não reconhece sinônimos nem paráfrases — `estar` e `estejam` são palavras distintas para o algoritmo. Regras que o LLM reformulou muito podem ter score baixo mesmo estando corretas. O campo `melhor_score` no JSON permite inspecionar esses casos borderline.
+> **Limitação:** o Jaccard não reconhece sinônimos nem paráfrases — `estar` e `estejam` são palavras distintas para o algoritmo. Os sub-scores no JSON permitem inspecionar esses casos borderline.
 
 ---
 

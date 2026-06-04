@@ -149,8 +149,8 @@ def load_spreadsheet(path: Path) -> dict[str, dict]:
 # Avaliação de um único JSON
 # ---------------------------------------------------------------------------
 
-# MATCH_THRESHOLD = 0.25  # score mínimo para considerar uma regra "encontrada"
-MATCH_THRESHOLD = 0.2
+# MATCH_THRESHOLD = 0.25  # score mínimo padrão para considerar uma regra "encontrada"
+MATCH_THRESHOLD = 0.25
 
 
 def evaluate_file(json_path: Path, spreadsheet_data: dict[str, dict]) -> dict | None:
@@ -178,6 +178,7 @@ def evaluate_file(json_path: Path, spreadsheet_data: dict[str, dict]) -> dict | 
     n_extraidas = len(regras_extraidas)
     n_referencia = len(ref["regras"])
 
+    # --- Precisão: para cada regra extraída, melhor match na referência ---
     regras_avaliadas = []
     for regra in regras_extraidas:
         match = best_rule_match(regra, ref["regras"])
@@ -196,27 +197,54 @@ def evaluate_file(json_path: Path, spreadsheet_data: dict[str, dict]) -> dict | 
         })
 
     n_encontradas = sum(1 for r in regras_avaliadas if r["encontrada_na_referencia"])
-    n_nao_encontradas = n_extraidas - n_encontradas
-    percentual_confiabilidade = round(n_encontradas / n_extraidas * 100) if n_extraidas else 0
+    precisao = round(n_encontradas / n_extraidas, 3) if n_extraidas else 0.0
+
+    # --- Revocação: para cada regra de referência, melhor match nas extraídas ---
+    refs_cobertas = []
+    refs_nao_cobertas = []
+    for ref_regra in ref["regras"]:
+        match = best_rule_match(ref_regra, regras_extraidas)
+        coberta = match["score_combinado"] >= MATCH_THRESHOLD
+        entry = {
+            "descricao":              ref_regra["descricao"],
+            "tipo":                   ref_regra["tipo"],
+            "condicao":               ref_regra["condicao"],
+            "melhor_score_combinado": match["score_combinado"],
+        }
+        (refs_cobertas if coberta else refs_nao_cobertas).append(entry)
+
+    n_cobertas = len(refs_cobertas)
+    revocacao = round(n_cobertas / n_referencia, 3) if n_referencia else 0.0
+    f1 = round(2 * precisao * revocacao / (precisao + revocacao), 3) if (precisao + revocacao) > 0 else 0.0
+
+    fora_da_referencia = [r for r in regras_avaliadas if not r["encontrada_na_referencia"]]
 
     return {
-        "arquivo": data.get("arquivo"),
-        "id_arquivo": data.get("id_arquivo"),
-        "modelo": data.get("modelo"),
+        "arquivo":        data.get("arquivo"),
+        "id_arquivo":     data.get("id_arquivo"),
+        "modelo":         data.get("modelo"),
         "tokens_extracao": tokens_extracao,
-        "status": "avaliado",
-        "percentual_confiabilidade": percentual_confiabilidade,
+        "status":         "avaliado",
+        "metricas": {
+            "precisao":      precisao,
+            "revocacao":     revocacao,
+            "f1":            f1,
+            "threshold_match": MATCH_THRESHOLD,
+        },
         "contagem": {
-            "regras_extraidas":             n_extraidas,
-            "regras_na_referencia":         n_referencia,
-            "encontradas_na_referencia":    n_encontradas,
-            "nao_encontradas_na_referencia": n_nao_encontradas,
-            "threshold_match":              MATCH_THRESHOLD,
+            "regras_extraidas":              n_extraidas,
+            "regras_na_referencia":          n_referencia,
+            "encontradas_na_referencia":     n_encontradas,
+            "nao_encontradas_na_referencia": n_extraidas - n_encontradas,
+            "referencia_cobertas":           n_cobertas,
+            "referencia_nao_cobertas":       n_referencia - n_cobertas,
         },
         "referencia": {
             "nome_documento": ref["nome"],
         },
-        "regras": regras_avaliadas,
+        "regras":                    regras_avaliadas,
+        "fora_da_referencia":        fora_da_referencia,
+        "referencia_nao_coberta":    refs_nao_cobertas,
     }
 
 
@@ -262,29 +290,39 @@ def run_evaluation(results_dir: Path, spreadsheet_path: Path = DEFAULT_SPREADSHE
             print(f"  SEM REF  {json_path.name}")
         else:
             c = result["contagem"]
-            pct = round(c["encontradas_na_referencia"] / c["regras_extraidas"] * 100) if c["regras_extraidas"] else 0
+            m = result["metricas"]
             print(
                 f"  OK  {json_path.name}  |  "
-                f"extraidas={c['regras_extraidas']}  "
-                f"ref={c['regras_na_referencia']}  "
-                f"encontradas={c['encontradas_na_referencia']} ({pct}%)"
+                f"extraidas={c['regras_extraidas']}  ref={c['regras_na_referencia']}  "
+                f"P={m['precisao']:.2f}  R={m['revocacao']:.2f}  F1={m['f1']:.2f}"
             )
 
     avaliados = [r for r in resultados if r["status"] == "avaliado"]
-    total_extraidas = sum(r["contagem"]["regras_extraidas"] for r in avaliados)
+    total_extraidas  = sum(r["contagem"]["regras_extraidas"]          for r in avaliados)
+    total_referencia = sum(r["contagem"]["regras_na_referencia"]       for r in avaliados)
     total_encontradas = sum(r["contagem"]["encontradas_na_referencia"] for r in avaliados)
-    pct_total = round(total_encontradas / total_extraidas * 100) if total_extraidas else 0
-    total_tokens = sum(r["tokens_extracao"] for r in avaliados if r.get("tokens_extracao") is not None)
+    total_cobertas   = sum(r["contagem"]["referencia_cobertas"]        for r in avaliados)
+    total_tokens     = sum(r["tokens_extracao"] for r in avaliados if r.get("tokens_extracao") is not None)
+
+    precisao_geral  = round(total_encontradas / total_extraidas,  3) if total_extraidas  else 0.0
+    revocacao_geral = round(total_cobertas    / total_referencia, 3) if total_referencia else 0.0
+    f1_geral = round(
+        2 * precisao_geral * revocacao_geral / (precisao_geral + revocacao_geral), 3
+    ) if (precisao_geral + revocacao_geral) > 0 else 0.0
 
     output = {
         "resumo": {
-            "total_arquivos_avaliados": len(avaliados),
-            "total_sem_referencia": len(resultados) - len(avaliados),
-            "total_regras_extraidas": total_extraidas,
+            "total_arquivos_avaliados":        len(avaliados),
+            "total_sem_referencia":            len(resultados) - len(avaliados),
+            "total_regras_extraidas":          total_extraidas,
+            "total_regras_referencia":         total_referencia,
             "total_encontradas_na_referencia": total_encontradas,
-            "percentual_confiabilidade": pct_total,
-            "total_tokens_extracao": total_tokens,
-            "threshold_match": MATCH_THRESHOLD,
+            "total_referencia_cobertas":       total_cobertas,
+            "precisao":                        precisao_geral,
+            "revocacao":                       revocacao_geral,
+            "f1":                              f1_geral,
+            "total_tokens_extracao":           total_tokens,
+            "threshold_match":                 MATCH_THRESHOLD,
         },
         "avaliacoes": resultados,
     }
@@ -293,7 +331,11 @@ def run_evaluation(results_dir: Path, spreadsheet_path: Path = DEFAULT_SPREADSHE
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
 
-    print(f"\nResumo: {total_extraidas} regras extraidas, {total_encontradas} encontradas ({pct_total}% confiabilidade), {total_tokens} tokens gastos")
+    print(
+        f"\nResumo: {total_extraidas} extraidas | {total_referencia} referencia | "
+        f"P={precisao_geral:.2f}  R={revocacao_geral:.2f}  F1={f1_geral:.2f} | "
+        f"{total_tokens} tokens"
+    )
     print(f"Avaliacao salva em: {output_path}")
     return output_path
 
