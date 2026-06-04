@@ -40,16 +40,48 @@ def token_overlap(a: str, b: str) -> float:
     return len(ta & tb) / len(ta | tb)
 
 
-def best_match_score(rule_desc: str, reference_text: str) -> float:
+def rule_similarity(extracted: dict, reference: dict) -> dict:
     """
-    Divide o texto de referência em itens (por número/letra de lista ou por
-    quebra de linha) e retorna o maior score de sobreposição de tokens.
+    Score composto entre uma regra extraída e uma regra de referência.
+
+    Pesos:
+      60% descricao  — Jaccard sobre tokens
+      20% tipo       — match exato após normalização
+      20% condicao   — Jaccard, ou 1.0 se ambos null, ou 0.0 se só um é null
     """
-    # Divide em linhas e remove linhas vazias
-    lines = [l.strip() for l in reference_text.splitlines() if l.strip()]
-    if not lines:
-        return 0.0
-    return max(token_overlap(rule_desc, line) for line in lines)
+    desc_score = token_overlap(
+        str(extracted.get("descricao") or ""),
+        str(reference.get("descricao") or ""),
+    )
+
+    tipo_extr = normalize(str(extracted.get("tipo") or ""))
+    tipo_ref  = normalize(str(reference.get("tipo") or ""))
+    tipo_score = 1.0 if tipo_extr == tipo_ref else 0.0
+
+    cond_extr = extracted.get("condicao")
+    cond_ref  = reference.get("condicao")
+    if cond_extr is None and cond_ref is None:
+        cond_score = 1.0
+    elif cond_extr is None or cond_ref is None:
+        cond_score = 0.0
+    else:
+        cond_score = token_overlap(str(cond_extr), str(cond_ref))
+
+    combined = round(0.6 * desc_score + 0.2 * tipo_score + 0.2 * cond_score, 3)
+    return {
+        "score_descricao": round(desc_score, 3),
+        "score_tipo":      round(tipo_score, 3),
+        "score_condicao":  round(cond_score, 3),
+        "score_combinado": combined,
+    }
+
+
+def best_rule_match(extracted: dict, reference_rules: list) -> dict:
+    """Retorna o score do melhor match dentre todas as regras de referência."""
+    if not reference_rules:
+        return {"score_descricao": 0.0, "score_tipo": 0.0, "score_condicao": 0.0, "score_combinado": 0.0}
+    scores = [rule_similarity(extracted, ref) for ref in reference_rules]
+    return max(scores, key=lambda s: s["score_combinado"])
 
 
 # ---------------------------------------------------------------------------
@@ -59,33 +91,55 @@ def best_match_score(rule_desc: str, reference_text: str) -> float:
 def load_spreadsheet(path: Path) -> dict[str, dict]:
     """
     Retorna dict keyed por id_arquivo (string, ex: "1", "10", "43").
-    Valor: {"nome": str, "extracoes": [str, ...]}
+    Valor: {"nome": str, "regras": [{"descricao", "tipo", "condicao"}, ...]}
+
+    Formato da planilha:
+      col[0] = Id_arquivo
+      col[1] = Nome Resolução
+      col[4] = Regras validadas — fragmento JSON: "regras": [{id, descricao, tipo, condicao, referencia}, ...]
     """
     wb = openpyxl.load_workbook(path)
     ws = wb.active
 
     records: dict[str, dict] = {}
     for row in ws.iter_rows(min_row=2, values_only=True):
-        if len(row) < 10:
+        if len(row) < 5:
             continue
-        id_arq = row[0]
-        nome   = row[1]
-        ext1   = row[5]
-        ext2   = row[7]
-        ext3   = row[9] if len(row) > 9 else None
+        id_arq      = row[0]
+        nome        = row[1]
+        regras_json = row[4]
+
         if id_arq is None:
             continue
 
-        # id pode vir como float (ex: 1.0) — normaliza para string sem zeros
-        id_str = str(int(float(id_arq)))
+        try:
+            id_str = str(int(float(str(id_arq).strip())))
+        except (ValueError, TypeError):
+            id_str = str(id_arq).strip()
 
-        extracoes = [e for e in [ext1, ext2, ext3] if e and str(e).strip()]
-        if not extracoes:
+        if not regras_json or not str(regras_json).strip():
+            continue
+
+        try:
+            parsed = json.loads("{" + str(regras_json) + "}")
+            regras = [
+                {
+                    "descricao": r.get("descricao") or "",
+                    "tipo":      r.get("tipo") or "",
+                    "condicao":  r.get("condicao"),
+                }
+                for r in parsed.get("regras", [])
+                if r.get("descricao")
+            ]
+        except (json.JSONDecodeError, KeyError):
+            continue
+
+        if not regras:
             continue
 
         records[id_str] = {
-            "nome": str(nome) if nome else "",
-            "extracoes": extracoes,
+            "nome":   str(nome) if nome else "",
+            "regras": regras,
         }
 
     return records
@@ -122,34 +176,23 @@ def evaluate_file(json_path: Path, spreadsheet_data: dict[str, dict]) -> dict | 
     tokens_extracao = data.get("tokens")
     regras_extraidas: list[dict] = data.get("regras", [])
     n_extraidas = len(regras_extraidas)
+    n_referencia = len(ref["regras"])
 
-    # Conta regras de referência: usa a média do número de linhas não-vazias
-    # entre as extrações disponíveis como proxy de "quantidade esperada"
-    ref_counts = []
-    for ext_text in ref["extracoes"]:
-        linhas = [l.strip() for l in ext_text.splitlines() if l.strip()]
-        ref_counts.append(len(linhas))
-    n_referencia_media = round(sum(ref_counts) / len(ref_counts), 1)
-
-    # Para cada regra extraída, calcula o melhor score contra cada extração manual
     regras_avaliadas = []
     for regra in regras_extraidas:
-        desc = regra.get("descricao", "")
-        scores_por_extrator = []
-        for ext_text in ref["extracoes"]:
-            score = best_match_score(desc, ext_text)
-            scores_por_extrator.append(round(score, 3))
-
-        melhor_score = max(scores_por_extrator)
-        encontrada = melhor_score >= MATCH_THRESHOLD
+        match = best_rule_match(regra, ref["regras"])
+        encontrada = match["score_combinado"] >= MATCH_THRESHOLD
 
         regras_avaliadas.append({
-            "id": regra.get("id"),
-            "descricao": desc,
-            "tipo": regra.get("tipo"),
+            "id":                       regra.get("id"),
+            "descricao":                regra.get("descricao", ""),
+            "tipo":                     regra.get("tipo"),
+            "condicao":                 regra.get("condicao"),
             "encontrada_na_referencia": encontrada,
-            "melhor_score": melhor_score,
-            "scores_por_extrator": scores_por_extrator,
+            "melhor_score_combinado":   match["score_combinado"],
+            "score_descricao":          match["score_descricao"],
+            "score_tipo":               match["score_tipo"],
+            "score_condicao":           match["score_condicao"],
         })
 
     n_encontradas = sum(1 for r in regras_avaliadas if r["encontrada_na_referencia"])
@@ -164,16 +207,14 @@ def evaluate_file(json_path: Path, spreadsheet_data: dict[str, dict]) -> dict | 
         "status": "avaliado",
         "percentual_confiabilidade": percentual_confiabilidade,
         "contagem": {
-            "regras_extraidas": n_extraidas,
-            "referencia_media_linhas": n_referencia_media,
-            "encontradas_na_referencia": n_encontradas,
+            "regras_extraidas":             n_extraidas,
+            "regras_na_referencia":         n_referencia,
+            "encontradas_na_referencia":    n_encontradas,
             "nao_encontradas_na_referencia": n_nao_encontradas,
-            "threshold_match": MATCH_THRESHOLD,
+            "threshold_match":              MATCH_THRESHOLD,
         },
         "referencia": {
             "nome_documento": ref["nome"],
-            "n_extratores": len(ref["extracoes"]),
-            "contagens_por_extrator": ref_counts,
         },
         "regras": regras_avaliadas,
     }
@@ -225,7 +266,7 @@ def run_evaluation(results_dir: Path, spreadsheet_path: Path = DEFAULT_SPREADSHE
             print(
                 f"  OK  {json_path.name}  |  "
                 f"extraidas={c['regras_extraidas']}  "
-                f"ref~{c['referencia_media_linhas']}  "
+                f"ref={c['regras_na_referencia']}  "
                 f"encontradas={c['encontradas_na_referencia']} ({pct}%)"
             )
 
