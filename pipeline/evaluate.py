@@ -149,8 +149,8 @@ def load_spreadsheet(path: Path) -> dict[str, dict]:
 # Avaliação de um único JSON
 # ---------------------------------------------------------------------------
 
-# MATCH_THRESHOLD = 0.25  # score mínimo padrão para considerar uma regra "encontrada"
-MATCH_THRESHOLD = 0.25
+# MATCH_THRESHOLD = 0.25  # score mínimo para considerar uma regra "encontrada"
+MATCH_THRESHOLD = 0.8
 
 
 def evaluate_file(json_path: Path, spreadsheet_data: dict[str, dict]) -> dict | None:
