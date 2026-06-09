@@ -97,12 +97,12 @@ copy .env.example .env
 
 ## Configuração do `.env`
 
-O arquivo `.env` controla qual provider e modelo serão utilizados, além das chaves de API.
+O arquivo `.env` centraliza toda a configuração da pipeline — provider, modelo, parâmetros de execução e avaliação. Com ele preenchido, basta rodar `python run.py` sem nenhum argumento.
 
 ```env
 # Provider ativo: google | anthropic | openai | ollama
 PROVIDER=google
-MODEL=gemini-2.0-flash
+MODEL=gemini-flash-latest
 
 # Chaves de API (preencha apenas a do provider escolhido)
 GEMINI_API_KEY=
@@ -112,17 +112,38 @@ OPENAI_API_KEY=
 # Apenas se PROVIDER=ollama
 OLLAMA_BASE_URL=http://localhost:11434/v1
 
-# Parâmetros de execução (opcionais — remova o comentário para ativar)
-# TEMPERATURE=0.0    # 0.0 = determinístico | 1.0 = criativo
-# MAX_TOKENS=8192    # limite de tokens na resposta
+# Parâmetros de execução do LLM (opcionais — remova o comentário para ativar)
+# TEMPERATURE=0.0    # 0.0 = determinístico | 1.0 = criativo (recomendado: 0.0 para extração)
+# MAX_TOKENS=8192    # limite de tokens na resposta do modelo
 # TIMEOUT=120        # timeout por requisição em segundos
 # TOP_P=0.9          # nucleus sampling — não use junto com TEMPERATURE
 # TOP_K=40           # limita amostragem aos K tokens mais prováveis
+
+# Parâmetros de execução da pipeline (opcionais — remova o comentário para ativar)
+# INPUT_DIR=../docs        # pasta com os PDFs de entrada (default: ../docs)
+# OUTPUT_DIR=../results    # pasta base de saída (default: ../results)
+# BATCH_SIZE=0             # documentos por lote (0 = individual, ≥2 = batch)
+# EVALUATE=false           # avaliação automática ao final (true | false)
+
+# Parâmetros de avaliação (opcionais — remova o comentário para ativar)
+# MATCH_THRESHOLD=0.75     # score mínimo (0.0–1.0) para considerar uma regra como encontrada
 ```
 
-Se um parâmetro não estiver definido no `.env`, o provider usa seu próprio default. Para tarefas de extração estruturada, recomenda-se `TEMPERATURE=0.0` para resultados mais consistentes e reproduzíveis.
+**Prioridade:** argumentos de linha de comando sempre sobrepõem o `.env` — `--batch-size 5` no terminal ignora `BATCH_SIZE=3` do `.env`.
+
+Se um parâmetro de LLM não estiver definido, o provider usa seu próprio default. Para extração estruturada, recomenda-se `TEMPERATURE=0.0` para resultados consistentes e reproduzíveis.
 
 > **Atenção:** `TOP_P` e `TEMPERATURE` controlam a aleatoriedade por mecanismos diferentes — usar os dois ao mesmo tempo pode produzir comportamentos inesperados. Escolha um ou outro.
+
+### Sobre o `MATCH_THRESHOLD`
+
+Define o score mínimo para que uma regra extraída seja considerada equivalente a uma regra da planilha de referência. O score é calculado como:
+
+```
+score = 0.6 × Jaccard(descricao) + 0.2 × match_exato(tipo) + 0.2 × Jaccard(condicao)
+```
+
+Com base na distribuição observada nos dados deste projeto, o valor **0.75** é o mais adequado: existe um gap natural entre 0.775 (maior score de um não-match) e 0.833 (menor score de um match legítimo), o que torna 0.75 um ponto de corte seguro sem risco de falsos positivos.
 
 ---
 
@@ -494,7 +515,7 @@ Precisão e revocação se comportam de forma oposta: um modelo que extrai pouca
 - `referencia_nao_coberta`: regras da planilha que **não** foram cobertas por nenhuma regra extraída — indica o que o modelo deixou passar
 - `melhor_score_combinado`: score composto do melhor match encontrado (ver cálculo abaixo)
 - `score_descricao`, `score_tipo`, `score_condicao`: sub-scores individuais para diagnóstico de casos borderline
-- `threshold_match`: score mínimo para considerar um match válido (atualmente `0.2`, ajustável em `evaluate.py`)
+- `threshold_match`: score mínimo para considerar um match válido — lido do `.env` via `MATCH_THRESHOLD` (recomendado: `0.75`)
 
 **Como funciona o cálculo (score composto):**
 
