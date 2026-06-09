@@ -564,4 +564,4 @@ elif provider == "novo_provider":
     return XxxModel(model_name)
 ```
 
-Qualquer serviço com endpoint compatível com a API da OpenAI (como Groq, Together AI, etc.) pode ser adicionado usando `OpenAIModel` com um `base_url` customizado, da mesma forma que o Ollama.
+Qualquer serviço com endpoint compatível com a API da OpenAI (como Grok, Together AI, etc.) pode ser adicionado usando `OpenAIModel` com um `base_url` customizado, da mesma forma que o Ollama.
