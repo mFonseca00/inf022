@@ -26,7 +26,13 @@ class ResultadoExtracao(BaseModel):
     arquivo: str
     id_arquivo: str
     modelo: str
-    tokens: Optional[int]
+    tokens: Optional[int] = None
+    tokens_media_lote: Optional[int] = None
+    arquivos_no_lote: Optional[int] = None
     parametros_llm: Optional[ParametrosLLM] = None
     prompt_utilizado: Optional[str] = None
     regras: list[Regra]
+
+
+class ResultadoLote(BaseModel):
+    resultados: list[ResultadoExtracao]

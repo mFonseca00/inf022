@@ -213,9 +213,41 @@ python run.py --input ../docs --output ../results --provider google --model gemi
 
 # Com avaliação automática ao final (requer extracoes_manuais_validadas.xlsx)
 python run.py --input ../docs --output ../results --evaluate
+
+# Com processamento em lote (N documentos por chamada ao LLM)
+python run.py --input ../docs --output ../results --batch-size 3 --evaluate
 ```
 
-Os argumentos `--provider`, `--model` e `--evaluate` são opcionais. Se omitidos, a pipeline usa o que estiver definido no `.env` e não executa a avaliação.
+Os argumentos `--provider`, `--model`, `--evaluate` e `--batch-size` são opcionais. Se omitidos, a pipeline usa o que estiver definido no `.env`, não executa a avaliação e processa um documento por vez.
+
+### Modo batch (`--batch-size`)
+
+Por padrão, a pipeline envia um documento por chamada ao LLM. Com `--batch-size N`, ela agrupa os documentos em lotes de até N arquivos e processa cada lote em uma única chamada:
+
+```
+[system prompt — pago 1×]
+  + exemplos few-shot
+
+[user message — lote de N documentos]
+  === DOCUMENTO: 01_... | ID: 01 ===
+  <texto>
+  === DOCUMENTO: 02_... | ID: 02 ===
+  <texto>
+  ...
+```
+
+O system prompt (que inclui os exemplos few-shot) é cobrado apenas uma vez por lote, em vez de uma vez por documento — reduzindo o consumo de tokens quando há muitos arquivos para processar.
+
+**O que muda nos arquivos gerados:**
+
+- O campo `tokens` fica `null` e é substituído por `tokens_media_lote` (média do total de tokens do lote dividido pelo número de arquivos)
+- O campo `arquivos_no_lote` indica quantos documentos compuseram o lote
+- A pasta de saída recebe o sufixo `_batch` (ex: `2026-06-09_11-46-44_gemini-flash-latest_batch`)
+- Um arquivo `_lotes.json` é criado na pasta de saída, registrando para cada lote: arquivos processados, quantidade, total de tokens e média por arquivo
+
+**Fallback automático:** se uma chamada em lote falhar (resposta malformada, timeout, output truncado), a pipeline reprocessa automaticamente cada documento do lote individualmente, garantindo que nenhum arquivo seja perdido.
+
+**Recomendação:** lotes de 3 a 5 documentos equilibram bem a economia de tokens com o risco de falha. Lotes maiores podem estourar o limite de tokens de saída (`MAX_TOKENS`) se os documentos gerarem muitas regras.
 
 ### Avaliação em separado
 
@@ -230,21 +262,24 @@ python evaluate.py --results ../results/2025-06-01_14-32-05_gemini-2.0-flash --s
 
 O avaliador compara cada regra extraída com as extrações manuais da planilha e salva `_avaliacao.json` na mesma pasta com o percentual de confiabilidade por arquivo e o total de tokens gastos na extração. Não usa LLM — a comparação é puramente algorítmica, sem custo de API.
 
-Cada execução cria automaticamente uma subpasta dentro de `--output` com o timestamp e o nome do modelo, por exemplo:
+Cada execução cria automaticamente uma subpasta dentro de `--output` com o timestamp e o nome do modelo. Em modo batch, o sufixo `_batch` é adicionado ao nome da pasta:
 
 ```
 results/
-├── 2025-06-01_14-32-05_gemini-2.0-flash/
+├── 2025-06-01_14-32-05_gemini-2.0-flash/          # modo individual
 │   ├── 01_diploma.json
 │   └── 10_edital.json
-└── 2025-06-02_09-15-40_llama3.2/
+└── 2025-06-02_09-15-40_gemini-flash-latest_batch/ # modo batch
     ├── 01_diploma.json
-    └── 10_edital.json
+    ├── 10_edital.json
+    ├── _lotes.json
+    └── _avaliacao.json
 ```
 
 Durante a execução, a pipeline exibe o progresso no terminal:
 
 ```
+# Modo individual
 Encontrados 2 PDFs.
 Resultados serao salvos em: ../results/2025-06-01_14-32-05_gemini-2.0-flash
 
@@ -254,9 +289,23 @@ Processando: 10_edital.pdf
   ERRO ao processar 10_edital.pdf: <mensagem de erro>
 
 Concluido.
+
+# Modo batch (--batch-size 3)
+Encontrados 6 PDFs.
+Resultados serao salvos em: ../results/2025-06-02_09-15-40_gemini-flash-latest_batch
+
+Processando lote [1]: 01_diploma.pdf, 02_edital.pdf, 10_sei.pdf
+  OK 8 regras extraidas -> 01_diploma.json
+  OK 9 regras extraidas -> 02_edital.json
+  OK 13 regras extraidas -> 10_sei.json
+Processando lote [2]: 28_edital.pdf, 36_resolucao.pdf
+  OK 22 regras extraidas -> 28_edital.json
+  OK 11 regras extraidas -> 36_resolucao.json
+
+Concluido.
 ```
 
-Isso permite comparar facilmente os resultados entre modelos e entre execuções diferentes.
+Isso permite comparar facilmente os resultados entre modelos, modos de execução e execuções diferentes.
 
 ---
 
@@ -264,12 +313,16 @@ Isso permite comparar facilmente os resultados entre modelos e entre execuções
 
 Cada PDF gera um arquivo `.json` com o seguinte formato:
 
+**Modo individual** — `tokens` contém o custo real da chamada:
+
 ```json
 {
   "arquivo": "10_SEI_4282227_Edital_18_2025.pdf",
   "id_arquivo": "10",
   "modelo": "gemini-2.0-flash",
-  "tokens": 3842,
+  "tokens": 39878,
+  "tokens_media_lote": null,
+  "arquivos_no_lote": null,
   "prompt_utilizado": "prompt_extracao_regras_v4.md",
   "parametros_llm": {
     "provider": "google",
@@ -288,13 +341,45 @@ Cada PDF gera um arquivo `.json` com o seguinte formato:
       "tipo": "obrigatória",
       "condicao": null,
       "referencia": "Item 1.2"
+    }
+  ]
+}
+```
+
+**Modo batch** — `tokens` é `null`; `tokens_media_lote` e `arquivos_no_lote` indicam o custo médio e o tamanho do lote:
+
+```json
+{
+  "arquivo": "10_SEI_4282227_Edital_18_2025.pdf",
+  "id_arquivo": "10",
+  "modelo": "gemini-flash-latest",
+  "tokens": null,
+  "tokens_media_lote": 16402,
+  "arquivos_no_lote": 4,
+  "prompt_utilizado": "prompt_extracao_regras_v4.md",
+  "parametros_llm": { "..." },
+  "regras": [ "..." ]
+}
+```
+
+O arquivo `_lotes.json` (gerado apenas em modo batch) registra as estatísticas por lote:
+
+```json
+{
+  "lotes": [
+    {
+      "lote": 1,
+      "arquivos": ["01_diploma.pdf", "02_edital.pdf", "10_sei.pdf"],
+      "quantidade_arquivos": 3,
+      "tokens_total_lote": 49206,
+      "tokens_media_por_arquivo": 16402
     },
     {
-      "id": "R02",
-      "descricao": "Não estar em gozo de férias no momento da participação no evento.",
-      "tipo": "restritiva",
-      "condicao": null,
-      "referencia": "Item 1.3.1"
+      "lote": 2,
+      "arquivos": ["28_edital.pdf", "36_resolucao.pdf"],
+      "quantidade_arquivos": 2,
+      "tokens_total_lote": 32804,
+      "tokens_media_por_arquivo": 16402
     }
   ]
 }
@@ -311,7 +396,7 @@ Cada PDF gera um arquivo `.json` com o seguinte formato:
 
 ### Formato do `_avaliacao.json`
 
-Gerado pelo `evaluate.py` dentro da mesma pasta dos JSONs individuais:
+Gerado pelo `evaluate.py` dentro da mesma pasta dos JSONs individuais. Em execuções batch, inclui uma seção `lotes` entre o `resumo` e as `avaliacoes`:
 
 ```json
 {

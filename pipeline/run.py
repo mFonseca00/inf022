@@ -29,7 +29,7 @@ load_dotenv(Path(__file__).parent / ".env")
 
 from config import get_model, get_model_settings
 from models import ParametrosLLM
-from extractor import extract
+from extractor import extract, extract_batch
 from evaluate import run_evaluation
 
 
@@ -46,12 +46,12 @@ def infer_file_id(filename: str) -> str:
     return match.group(1).zfill(2) if match else "00"
 
 
-def make_run_dir(base_output: Path, model_name: str) -> Path:
+def make_run_dir(base_output: Path, model_name: str, batch: bool = False) -> Path:
     """Cria uma subpasta única para esta execução, com timestamp e nome do modelo."""
     timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    # Remove caracteres inválidos em nomes de pasta (ex: "/" em nomes de modelo)
     safe_model = re.sub(r"[^\w\-.]", "_", model_name)
-    run_dir = base_output / f"{timestamp}_{safe_model}"
+    suffix = "_batch" if batch else ""
+    run_dir = base_output / f"{timestamp}_{safe_model}{suffix}"
     run_dir.mkdir(parents=True, exist_ok=True)
     return run_dir
 
@@ -64,8 +64,15 @@ def _get_setting_value(settings, key: str):
     return getattr(settings, key, None)
 
 
-def process_folder(input_dir: Path, output_dir: Path, model, model_name: str, settings=None, llm_parameters=None, evaluate: bool = False):
-    run_dir = make_run_dir(output_dir, model_name)
+def _save_resultado(resultado, pdf_stem: str, run_dir: Path):
+    output_path = run_dir / f"{pdf_stem}.json"
+    with open(output_path, "w", encoding="utf-8") as f:
+        json.dump(resultado.model_dump(), f, ensure_ascii=False, indent=2)
+    print(f"  OK {len(resultado.regras)} regras extraidas -> {output_path.name}")
+
+
+def process_folder(input_dir: Path, output_dir: Path, model, model_name: str, settings=None, llm_parameters=None, evaluate: bool = False, batch_size: int = 0):
+    run_dir = make_run_dir(output_dir, model_name, batch=batch_size > 1)
     pdfs = sorted(input_dir.glob("*.pdf"))
 
     if not pdfs:
@@ -75,12 +82,24 @@ def process_folder(input_dir: Path, output_dir: Path, model, model_name: str, se
     print(f"Encontrados {len(pdfs)} PDFs.")
     print(f"Resultados serão salvos em: {run_dir}\n")
 
+    if batch_size > 1:
+        _process_in_batches(pdfs, run_dir, model, settings, llm_parameters, batch_size)
+    else:
+        _process_individually(pdfs, run_dir, model, settings, llm_parameters)
+
+    print("\nConcluido.")
+
+    if evaluate:
+        print()
+        run_evaluation(run_dir)
+
+
+def _process_individually(pdfs, run_dir, model, settings, llm_parameters):
     for pdf_path in pdfs:
         print(f"Processando: {pdf_path.name}")
         try:
             text = extract_text_from_pdf(pdf_path)
             file_id = infer_file_id(pdf_path.name)
-
             resultado = extract(
                 text=text,
                 filename=pdf_path.name,
@@ -89,21 +108,58 @@ def process_folder(input_dir: Path, output_dir: Path, model, model_name: str, se
                 settings=settings,
                 llm_parameters=llm_parameters,
             )
-
-            output_path = run_dir / f"{pdf_path.stem}.json"
-            with open(output_path, "w", encoding="utf-8") as f:
-                json.dump(resultado.model_dump(), f, ensure_ascii=False, indent=2)
-
-            print(f"  OK {len(resultado.regras)} regras extraidas -> {output_path.name}")
-
+            _save_resultado(resultado, pdf_path.stem, run_dir)
         except Exception as e:
             print(f"  ERRO ao processar {pdf_path.name}: {e}")
 
-    print("\nConcluido.")
 
-    if evaluate:
-        print()
-        run_evaluation(run_dir)
+def _process_in_batches(pdfs, run_dir, model, settings, llm_parameters, batch_size):
+    registro_lotes = []
+
+    for i in range(0, len(pdfs), batch_size):
+        lote = pdfs[i:i + batch_size]
+        numero_lote = i // batch_size + 1
+        nomes = ", ".join(p.name for p in lote)
+        print(f"Processando lote [{numero_lote}]: {nomes}")
+        try:
+            documents = [
+                {"text": extract_text_from_pdf(p), "filename": p.name, "file_id": infer_file_id(p.name)}
+                for p in lote
+            ]
+            resultados = extract_batch(
+                documents=documents,
+                model=model,
+                settings=settings,
+                llm_parameters=llm_parameters,
+            )
+            for resultado, pdf_path in zip(resultados, lote):
+                _save_resultado(resultado, pdf_path.stem, run_dir)
+
+            tokens_media = resultados[0].tokens_media_lote if resultados else None
+            tokens_total = tokens_media * len(lote) if tokens_media else None
+            registro_lotes.append({
+                "lote": numero_lote,
+                "arquivos": [p.name for p in lote],
+                "quantidade_arquivos": len(lote),
+                "tokens_total_lote": tokens_total,
+                "tokens_media_por_arquivo": tokens_media,
+            })
+        except Exception as e:
+            print(f"  ERRO no lote, reprocessando individualmente. Causa: {e}")
+            _process_individually(lote, run_dir, model, settings, llm_parameters)
+            registro_lotes.append({
+                "lote": numero_lote,
+                "arquivos": [p.name for p in lote],
+                "quantidade_arquivos": len(lote),
+                "tokens_total_lote": None,
+                "tokens_media_por_arquivo": None,
+                "erro": str(e),
+                "reprocessado_individualmente": True,
+            })
+
+    lotes_path = run_dir / "_lotes.json"
+    with open(lotes_path, "w", encoding="utf-8") as f:
+        json.dump({"lotes": registro_lotes}, f, ensure_ascii=False, indent=2)
 
 
 def main():
@@ -113,6 +169,7 @@ def main():
     parser.add_argument("--provider", help="Provider (google, anthropic, openai, ollama) — sobrepoem PROVIDER do .env")
     parser.add_argument("--model", help="Nome do modelo — sobrepoem MODEL do .env")
     parser.add_argument("--evaluate", action="store_true", help="Executa a avaliacao automaticamente apos a extracao")
+    parser.add_argument("--batch-size", type=int, default=0, help="Processa N documentos por chamada ao LLM (0 = individual)")
     args = parser.parse_args()
 
     # Argumentos de CLI têm prioridade sobre variáveis de ambiente
@@ -139,7 +196,7 @@ def main():
     input_dir = Path(args.input)
     output_dir = Path(args.output)
 
-    process_folder(input_dir, output_dir, model, model_name, settings, llm_parameters, evaluate=args.evaluate)
+    process_folder(input_dir, output_dir, model, model_name, settings, llm_parameters, evaluate=args.evaluate, batch_size=args.batch_size)
 
 
 if __name__ == "__main__":

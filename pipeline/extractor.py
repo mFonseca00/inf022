@@ -8,7 +8,7 @@ from pathlib import Path
 from pydantic_ai import Agent
 from pydantic_ai.settings import ModelSettings
 
-from models import ParametrosLLM, ResultadoExtracao
+from models import ParametrosLLM, ResultadoExtracao, ResultadoLote
 
 PROMPT_PATH = Path(__file__).parent / "prompts" / "prompt_extracao_regras_v4.md"
 EXAMPLES_DIR = Path(__file__).parent / "docs_for_prompt_examples"
@@ -125,3 +125,60 @@ def extract(
     resultado.prompt_utilizado = prompt_utilizado
 
     return resultado
+
+
+def extract_batch(
+    documents: list[dict],
+    model,
+    settings: ModelSettings | None = None,
+    llm_parameters: ParametrosLLM | None = None,
+) -> list[ResultadoExtracao]:
+    """
+    Extrai regras de múltiplos documentos em uma única chamada ao LLM.
+
+    Cada item de `documents` deve ter as chaves: text, filename, file_id.
+    Os tokens do system prompt são pagos uma única vez para todo o lote.
+
+    Retorna os resultados na mesma ordem dos documentos de entrada.
+    """
+    agent = Agent(
+        model=model,
+        output_type=ResultadoLote,
+        system_prompt=SYSTEM_PROMPT,
+        model_settings=settings,
+    )
+
+    partes = []
+    for doc in documents:
+        partes.append(
+            f"=== DOCUMENTO: {doc['filename']} | ID: {doc['file_id']} ===\n\n"
+            f"{doc['text']}"
+        )
+
+    user_message = (
+        "Processe cada documento abaixo e retorne a extração de todos no campo "
+        "`resultados`, na mesma ordem em que aparecem.\n\n"
+        + "\n\n".join(partes)
+    )
+
+    prompt_utilizado = PROMPT_PATH.name
+    result = agent.run_sync(user_message)
+
+    usage = result.usage
+    tokens_total = usage.total_tokens if usage else None
+    n_docs = len(documents)
+    tokens_media = tokens_total // n_docs if tokens_total else None
+
+    resultados = result.output.resultados
+    for resultado, doc in zip(resultados, documents):
+        resultado.arquivo = doc["filename"]
+        resultado.id_arquivo = doc["file_id"]
+        if llm_parameters is not None:
+            resultado.modelo = llm_parameters.model
+        resultado.tokens = None
+        resultado.tokens_media_lote = tokens_media
+        resultado.arquivos_no_lote = n_docs
+        resultado.parametros_llm = llm_parameters
+        resultado.prompt_utilizado = prompt_utilizado
+
+    return resultados

@@ -168,12 +168,13 @@ def evaluate_file(json_path: Path, spreadsheet_data: dict[str, dict]) -> dict | 
         return {
             "arquivo": data.get("arquivo"),
             "id_arquivo": data.get("id_arquivo"),
+            "tokens_extracao": data.get("tokens") or data.get("tokens_media_lote"),
             "status": "sem_referencia",
             "mensagem": f"id_arquivo '{id_arquivo}' não encontrado na planilha.",
         }
 
     ref = spreadsheet_data[id_arquivo]
-    tokens_extracao = data.get("tokens")
+    tokens_extracao = data.get("tokens") or data.get("tokens_media_lote")
     regras_extraidas: list[dict] = data.get("regras", [])
     n_extraidas = len(regras_extraidas)
     n_referencia = len(ref["regras"])
@@ -302,13 +303,19 @@ def run_evaluation(results_dir: Path, spreadsheet_path: Path = DEFAULT_SPREADSHE
     total_referencia = sum(r["contagem"]["regras_na_referencia"]       for r in avaliados)
     total_encontradas = sum(r["contagem"]["encontradas_na_referencia"] for r in avaliados)
     total_cobertas   = sum(r["contagem"]["referencia_cobertas"]        for r in avaliados)
-    total_tokens     = sum(r["tokens_extracao"] for r in avaliados if r.get("tokens_extracao") is not None)
+    total_tokens     = sum(r.get("tokens_extracao") or r.get("tokens_media_lote") or 0 for r in resultados)
 
     precisao_geral  = round(total_encontradas / total_extraidas,  3) if total_extraidas  else 0.0
     revocacao_geral = round(total_cobertas    / total_referencia, 3) if total_referencia else 0.0
     f1_geral = round(
         2 * precisao_geral * revocacao_geral / (precisao_geral + revocacao_geral), 3
     ) if (precisao_geral + revocacao_geral) > 0 else 0.0
+
+    lotes_path = results_dir / "_lotes.json"
+    lotes = None
+    if lotes_path.exists():
+        with open(lotes_path, encoding="utf-8") as f:
+            lotes = json.load(f).get("lotes")
 
     output = {
         "resumo": {
@@ -324,6 +331,7 @@ def run_evaluation(results_dir: Path, spreadsheet_path: Path = DEFAULT_SPREADSHE
             "total_tokens_extracao":           total_tokens,
             "threshold_match":                 MATCH_THRESHOLD,
         },
+        **({"lotes": lotes} if lotes is not None else {}),
         "avaliacoes": resultados,
     }
 
