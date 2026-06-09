@@ -9,6 +9,7 @@ from pydantic_ai import Agent
 from pydantic_ai.settings import ModelSettings
 
 from models import ParametrosLLM, ResultadoExtracao
+from pdf_utils import extract_text_from_pdf
 
 PROMPT_PATH = Path(__file__).parent / "prompts" / "prompt_extracao_regras_v4.md"
 EXAMPLES_DIR = Path(__file__).parent / "docs_for_prompt_examples"
@@ -21,14 +22,6 @@ EXAMPLE_FILENAMES = [
 
 with open(PROMPT_PATH, encoding="utf-8") as f:
     BASE_SYSTEM_PROMPT = f.read()
-
-
-def extract_text_from_pdf(pdf_path: Path) -> str:
-    import pdfplumber
-
-    with pdfplumber.open(pdf_path) as pdf:
-        pages = [page.extract_text() or "" for page in pdf.pages]
-    return "\n".join(pages)
 
 
 def build_examples_context() -> str:

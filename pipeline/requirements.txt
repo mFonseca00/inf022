@@ -1,4 +1,4 @@
 pydantic-ai[google,anthropic,openai]
-pdfplumber
+docling
 python-dotenv
 openpyxl

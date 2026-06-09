@@ -21,7 +21,6 @@ import re
 from datetime import datetime
 from pathlib import Path
 
-import pdfplumber
 from dotenv import load_dotenv
 
 
@@ -31,13 +30,7 @@ from config import get_model, get_model_settings
 from models import ParametrosLLM
 from extractor import extract
 from evaluate import run_evaluation
-
-
-def extract_text_from_pdf(pdf_path: Path) -> str:
-    """Extrai texto de todas as páginas de um PDF."""
-    with pdfplumber.open(pdf_path) as pdf:
-        pages = [page.extract_text() or "" for page in pdf.pages]
-    return "\n".join(pages)
+from pdf_utils import extract_text_from_pdf
 
 
 def infer_file_id(filename: str) -> str:
