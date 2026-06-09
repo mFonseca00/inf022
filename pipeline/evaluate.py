@@ -277,7 +277,7 @@ def run_evaluation(results_dir: Path, spreadsheet_path: Path = DEFAULT_SPREADSHE
     spreadsheet_data = load_spreadsheet(spreadsheet_path)
     print(f"  {len(spreadsheet_data)} documentos com referencia.\n")
 
-    json_files = sorted(f for f in results_dir.glob("*.json") if f.stem != "_avaliacao")
+    json_files = sorted(f for f in results_dir.glob("*.json") if f.stem not in ("_avaliacao", "_lotes"))
 
     if not json_files:
         print("Nenhum JSON encontrado na pasta de resultados.")
