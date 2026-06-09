@@ -164,8 +164,8 @@ def _process_in_batches(pdfs, run_dir, model, settings, llm_parameters, batch_si
 
 def main():
     parser = argparse.ArgumentParser(description="Pipeline de extração de regras institucionais")
-    parser.add_argument("--input", required=True, help="Pasta com os PDFs de entrada")
-    parser.add_argument("--output", required=True, help="Pasta base onde as subpastas de execução serão criadas")
+    parser.add_argument("--input", default=None, help="Pasta com os PDFs de entrada (default: INPUT_DIR do .env ou ../docs)")
+    parser.add_argument("--output", default=None, help="Pasta base de saída (default: OUTPUT_DIR do .env ou ../results)")
     parser.add_argument("--provider", help="Provider (google, anthropic, openai, ollama) — sobrepoem PROVIDER do .env")
     parser.add_argument("--model", help="Nome do modelo — sobrepoem MODEL do .env")
     parser.add_argument("--evaluate", action="store_true", help="Executa a avaliacao automaticamente apos a extracao")
@@ -193,10 +193,14 @@ def main():
         top_k=_get_setting_value(settings, "top_k"),
         base_url=base_url,
     )
-    input_dir = Path(args.input)
-    output_dir = Path(args.output)
 
-    process_folder(input_dir, output_dir, model, model_name, settings, llm_parameters, evaluate=args.evaluate, batch_size=args.batch_size)
+    # Argumentos de CLI têm prioridade sobre variáveis de ambiente
+    input_dir  = Path(args.input)  if args.input  else Path(os.getenv("INPUT_DIR",  "../docs"))
+    output_dir = Path(args.output) if args.output else Path(os.getenv("OUTPUT_DIR", "../results"))
+    evaluate   = args.evaluate or os.getenv("EVALUATE", "").lower() in ("1", "true", "yes")
+    batch_size = args.batch_size if args.batch_size else int(os.getenv("BATCH_SIZE", "0"))
+
+    process_folder(input_dir, output_dir, model, model_name, settings, llm_parameters, evaluate=evaluate, batch_size=batch_size)
 
 
 if __name__ == "__main__":

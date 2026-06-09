@@ -13,9 +13,12 @@ import argparse
 import json
 import re
 import unicodedata
+import openpyxl
+import os as _os
+from dotenv import load_dotenv as _load_dotenv
 from pathlib import Path
 
-import openpyxl
+_load_dotenv(Path(__file__).parent / ".env")
 
 
 # ---------------------------------------------------------------------------
@@ -148,9 +151,10 @@ def load_spreadsheet(path: Path) -> dict[str, dict]:
 # ---------------------------------------------------------------------------
 # Avaliação de um único JSON
 # ---------------------------------------------------------------------------
-
-# MATCH_THRESHOLD = 0.25  # score mínimo para considerar uma regra "encontrada"
-MATCH_THRESHOLD = 0.8
+try:
+    MATCH_THRESHOLD = float(_os.getenv("MATCH_THRESHOLD", "0.8"))
+except ValueError:
+    MATCH_THRESHOLD = 0.8
 
 
 def evaluate_file(json_path: Path, spreadsheet_data: dict[str, dict]) -> dict | None:
