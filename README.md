@@ -238,10 +238,10 @@ Para extração estruturada, resultados determinísticos são essenciais. Com `T
 O score de comparação entre regras é calculado como:
 
 ```
-score = 0.6 × Jaccard(descricao) + 0.2 × match_exato(tipo) + 0.2 × Jaccard(condicao)
+score = 0.8 × Jaccard(descricao) + 0.1 × match_exato(tipo) + 0.1 × Jaccard(condicao)
 ```
 
-Com base nos dados observados neste projeto, existe um gap natural entre scores de falsos positivos (até 0.775) e matches legítimos (a partir de 0.833). O valor **0.75** fica no meio desse gap, eliminando ambiguidade sem risco de falsos positivos.
+O valor padrão é **0.5**. Com os pesos atuais (descrição com 80% do peso), o score reflete principalmente a similaridade textual — um score ≥ 0.5 exige que a descrição tenha Jaccard de pelo menos 0.375, evitando matches por coincidência de tipo e condição.
 
 ---
 
@@ -644,13 +644,15 @@ O avaliador não compara apenas a `descricao`. Cada par de regras (extraída vs.
 
 | Campo | Peso | Cálculo |
 |-------|------|---------|
-| `descricao` | 60% | Jaccard(descricao_extraida, descricao_referencia) |
-| `tipo` | 20% | 1.0 se tipos iguais após normalização, 0.0 se diferentes |
-| `condicao` | 20% | Jaccard se ambos preenchidos · 1.0 se ambos `null` · 0.0 se apenas um é `null` |
+| `descricao` | 80% | Jaccard(descricao_extraida, descricao_referencia) |
+| `tipo` | 10% | 1.0 se tipos iguais após normalização, 0.0 se diferentes |
+| `condicao` | 10% | Jaccard se ambos preenchidos · 1.0 se ambos `null` · 0.0 se apenas um é `null` |
 
 ```
-score_combinado = 0.6 × score_descricao + 0.2 × score_tipo + 0.2 × score_condicao
+score_combinado = 0.8 × score_descricao + 0.1 × score_tipo + 0.1 × score_condicao
 ```
+
+O peso maior na descrição garante que o score reflita principalmente a similaridade textual. Com os pesos anteriores (60/20/20), qualquer par onde ambas as regras fossem `obrigatória` e sem condição partia de um score mínimo de 0.40 — independente do texto. Com 80/10/10 esse piso cai para 0.20, eliminando matches espúrios.
 
 **Exemplo completo:**
 
@@ -667,9 +669,9 @@ score_descricao = Jaccard(A, B) = 0.857   (calculado acima)
 score_tipo      = 1.0   (ambos "obrigatoria" após normalização)
 score_condicao  = 1.0   (ambos null)
 
-score_combinado = 0.6 × 0.857 + 0.2 × 1.0 + 0.2 × 1.0
-               = 0.514 + 0.200 + 0.200
-               = 0.914
+score_combinado = 0.8 × 0.857 + 0.1 × 1.0 + 0.1 × 1.0
+               = 0.686 + 0.100 + 0.100
+               = 0.886
 ```
 
 Para cada regra extraída, o avaliador calcula esse score contra **todas** as regras da referência e guarda apenas o maior — o `melhor_score_combinado`. Se esse valor for ≥ `MATCH_THRESHOLD`, a regra é considerada **encontrada** (para precisão) ou **coberta** (para revocação).
@@ -688,7 +690,7 @@ vs. Ref R03 "Apresentar comprovante eleitoral."    → score 0.762   ← melhor
 melhor_score_combinado de R07 = 0.762
 ```
 
-Com `MATCH_THRESHOLD=0.75`: `0.762 ≥ 0.75` → R07 é marcada como `encontrada_na_referencia: true`.
+Com `MATCH_THRESHOLD=0.5`: `0.762 ≥ 0.5` → R07 é marcada como `encontrada_na_referencia: true`.
 
 ---
 
@@ -703,7 +705,7 @@ Precisão e revocação respondem perguntas opostas sobre o mesmo conjunto de da
 O avaliador percorre cada regra extraída, busca o melhor match na referência e verifica se o score ≥ threshold:
 
 ```
-Precisão = regras_extraidas_que_matcharam_na_referência / total_de_regras_extraidas
+Precisão = extraidas_com_match / total_extraidas
 ```
 
 **Exemplo:** o modelo extraiu 15 regras. 12 matcharam na referência. 3 não têm correspondente (foram inventadas ou subdivididas demais).
@@ -721,7 +723,7 @@ Uma precisão baixa indica que o modelo está extraindo coisas que não estão n
 O avaliador faz o caminho inverso: percorre cada regra da **referência**, busca o melhor match nas extraídas e verifica se o score ≥ threshold:
 
 ```
-Revocação = regras_da_referência_cobertas_pela_extração / total_de_regras_na_referência
+Revocação = gabarito_cobertas / total_no_gabarito
 ```
 
 **Exemplo:** a referência tem 13 regras. Todas as 13 foram cobertas por alguma regra extraída.
@@ -770,8 +772,8 @@ Se a precisão caísse para 0.5 com a mesma revocação, a média aritmética se
 As métricas do `resumo` **não são a média das métricas por arquivo**. O avaliador soma os contadores brutos de todos os arquivos e recalcula do zero:
 
 ```
-precisao_geral  = Σ(encontradas_na_referencia) / Σ(regras_extraidas)
-revocacao_geral = Σ(referencia_cobertas)        / Σ(regras_na_referencia)
+precisao_geral  = Σ(extraidas_com_match) / Σ(total_extraidas)
+revocacao_geral = Σ(gabarito_cobertas)  / Σ(total_no_gabarito)
 ```
 
 **Por quê?** Fazer média das métricas daria peso igual a documentos com 2 regras e documentos com 50 regras. Somar os contadores dá peso proporcional ao volume real de cada arquivo:
@@ -793,15 +795,16 @@ Soma dos contadores:   27 / 52           = 0.519  ← peso real, proporcional ao
   "resumo": {
     "total_arquivos_avaliados": 4,
     "total_sem_referencia": 0,
-    "total_regras_extraidas": 70,
-    "total_regras_referencia": 52,
-    "total_encontradas_na_referencia": 66,
-    "total_referencia_cobertas": 52,
+    "total_extraidas": 70,
+    "total_no_gabarito": 52,
+    "extraidas_com_match": 66,
+    "gabarito_cobertas": 52,
+    "gabarito_perdidas": 0,
     "precisao": 0.943,
     "revocacao": 1.0,
     "f1": 0.971,
     "total_tokens_extracao": 168749,
-    "threshold_match": 0.75
+    "threshold_match": 0.5
   },
   "avaliacoes": [
     {
@@ -814,15 +817,15 @@ Soma dos contadores:   27 / 52           = 0.519  ← peso real, proporcional ao
         "precisao": 0.8,
         "revocacao": 1.0,
         "f1": 0.889,
-        "threshold_match": 0.75
+        "threshold_match": 0.5
       },
       "contagem": {
-        "regras_extraidas": 15,
-        "regras_na_referencia": 13,
-        "encontradas_na_referencia": 12,
-        "nao_encontradas_na_referencia": 3,
-        "referencia_cobertas": 13,
-        "referencia_nao_cobertas": 0
+        "total_extraidas": 15,
+        "total_no_gabarito": 13,
+        "extraidas_com_match": 12,
+        "extraidas_sem_match": 3,
+        "gabarito_cobertas": 13,
+        "gabarito_perdidas": 0
       },
       "referencia": {
         "nome_documento": "EDITAL DE APOIO A CONCESSÃO DE DIÁRIAS E PASSAGENS"
@@ -871,7 +874,7 @@ Soma dos contadores:   27 / 52           = 0.519  ← peso real, proporcional ao
 - `regras` — todas as regras extraídas com seus scores individuais; `encontrada_na_referencia: true` significa que o `melhor_score_combinado` atingiu o threshold
 - `fora_da_referencia` — subconjunto de `regras` onde `encontrada_na_referencia: false`; indica o que o modelo inventou, duplicou ou subdividiu demais
 - `referencia_nao_coberta` — regras do gabarito que não foram cobertas por nenhuma regra extraída; indica o que o modelo deixou passar
-- `melhor_score_combinado` — score máximo obtido contra qualquer regra do gabarito; útil para entender por que uma regra ficou abaixo do threshold (ex: score 0.72 com threshold 0.75 indica texto quase idêntico com pequena diferença de palavras)
+- `melhor_score_combinado` — score máximo obtido contra qualquer regra do gabarito; com os pesos 80/10/10, um score baixo aqui significa que os textos têm poucas palavras em comum
 - `score_descricao`, `score_tipo`, `score_condicao` — sub-scores individuais para diagnóstico de casos borderline; se `score_descricao` é alto mas `score_tipo` é 0.0, o modelo extraiu o texto certo mas classificou o tipo errado
 
 ---

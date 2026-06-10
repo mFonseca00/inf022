@@ -1,0 +1,1311 @@
+{
+  "resumo": {
+    "total_arquivos_avaliados": 4,
+    "total_sem_referencia": 0,
+    "total_regras_extraidas": 58,
+    "total_regras_referencia": 39,
+    "total_encontradas_na_referencia": 18,
+    "total_referencia_cobertas": 25,
+    "precisao": 0.31,
+    "revocacao": 0.641,
+    "f1": 0.418,
+    "total_tokens_extracao": 86036,
+    "threshold_match": 0.5
+  },
+  "lotes": [
+    {
+      "lote": 1,
+      "arquivos": [
+        "23_Resolucao-N-1110-2015-afastamento-pos-graduacao.pdf",
+        "36_resolucao-no-32-2018-regimento-interno-consepe.pdf",
+        "39_edital-no-29-2024-prpgi-ifba-retificado-em-30-04-2025.PDF.pdf",
+        "41_EditalIngressoSimplificado2026.2CursosSubsequentes.docx3.pdf"
+      ],
+      "quantidade_arquivos": 4,
+      "tokens_total_lote": 86036,
+      "tokens_media_por_arquivo": 21509
+    }
+  ],
+  "avaliacoes": [
+    {
+      "arquivo": "23_Resolucao-N-1110-2015-afastamento-pos-graduacao.pdf",
+      "id_arquivo": "23",
+      "modelo": "gemini-flash-latest",
+      "tokens_extracao": 21509,
+      "status": "avaliado",
+      "metricas": {
+        "precisao": 0.308,
+        "revocacao": 1.0,
+        "f1": 0.471,
+        "threshold_match": 0.5
+      },
+      "contagem": {
+        "regras_extraidas": 13,
+        "regras_na_referencia": 4,
+        "encontradas_na_referencia": 4,
+        "nao_encontradas_na_referencia": 9,
+        "referencia_cobertas": 4,
+        "referencia_nao_cobertas": 0
+      },
+      "referencia": {
+        "nome_documento": "Resolucao-N-1110-2015-afastamento-pos-graduacao"
+      },
+      "regras": [
+        {
+          "id": "R01",
+          "descricao": "Ser docente do quadro efetivo da instituição.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.242,
+          "score_descricao": 0.053,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R02",
+          "descricao": "Ter concluído o Estágio Probatório.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.2,
+          "score_descricao": 0.0,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R03",
+          "descricao": "Comunicar por escrito ao Departamento da pretensão de participar de processo seletivo de pós-graduação, constante da programação do Departamento e do Plano Individual de Trabalho (PIT).",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.307,
+          "score_descricao": 0.133,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R04",
+          "descricao": "Ter sua solicitação apreciada pela área de conhecimento, pelo Colegiado de Curso e, posteriormente, deliberada pelo Conselho de Departamento.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.286,
+          "score_descricao": 0.107,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R05",
+          "descricao": "O afastamento será concedido mediante comprovação de que o docente foi aprovado em programa de pós-graduação oferecido por instituição oficial e devidamente recomendado pela CAPES/MEC.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.314,
+          "score_descricao": 0.143,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R06",
+          "descricao": "O programa de pós-graduação deverá ser reconhecido pelo sistema oficial de educação do respectivo País.",
+          "tipo": "condicional",
+          "condicao": "Apenas para cursos realizados no exterior.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.168,
+          "score_descricao": 0.211,
+          "score_tipo": 0.0,
+          "score_condicao": 0.0
+        },
+        {
+          "id": "R07",
+          "descricao": "Apresentar comprovante de aprovação no programa de pós-graduação.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": true,
+          "melhor_score_combinado": 1.0,
+          "score_descricao": 1.0,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R08",
+          "descricao": "Apresentar formulário de afastamento, fornecido pela Pró-reitoria de Gestão e Desenvolvimento de Pessoas (PGDP) devidamente preenchido.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": true,
+          "melhor_score_combinado": 1.0,
+          "score_descricao": 1.0,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R09",
+          "descricao": "Apresentar termo de compromisso de retorno ao Departamento de lotação.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": true,
+          "melhor_score_combinado": 1.0,
+          "score_descricao": 1.0,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R10",
+          "descricao": "Apresentar Declaração do Departamento de atendimento ao exposto no Art. 3º desta Resolução.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": true,
+          "melhor_score_combinado": 1.0,
+          "score_descricao": 1.0,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R11",
+          "descricao": "Assumir o compromisso, mediante termo escrito, de retornar para o Departamento de Lotação, após a realização do curso, para cumprimento do período igual àquele do afastamento, com carga horária não inferior ao regime de trabalho que possuía durante o período do curso.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.341,
+          "score_descricao": 0.176,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R12",
+          "descricao": "Obter expressa autorização do Governador do Estado.",
+          "tipo": "condicional",
+          "condicao": "Apenas para estudos de pós-graduação no exterior.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.044,
+          "score_descricao": 0.056,
+          "score_tipo": 0.0,
+          "score_condicao": 0.0
+        },
+        {
+          "id": "R13",
+          "descricao": "É vedado o estabelecimento de vínculos com programas especiais remunerados durante o período de afastamento.",
+          "tipo": "restritiva",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.196,
+          "score_descricao": 0.12,
+          "score_tipo": 0.0,
+          "score_condicao": 1.0
+        }
+      ],
+      "fora_da_referencia": [
+        {
+          "id": "R01",
+          "descricao": "Ser docente do quadro efetivo da instituição.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.242,
+          "score_descricao": 0.053,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R02",
+          "descricao": "Ter concluído o Estágio Probatório.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.2,
+          "score_descricao": 0.0,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R03",
+          "descricao": "Comunicar por escrito ao Departamento da pretensão de participar de processo seletivo de pós-graduação, constante da programação do Departamento e do Plano Individual de Trabalho (PIT).",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.307,
+          "score_descricao": 0.133,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R04",
+          "descricao": "Ter sua solicitação apreciada pela área de conhecimento, pelo Colegiado de Curso e, posteriormente, deliberada pelo Conselho de Departamento.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.286,
+          "score_descricao": 0.107,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R05",
+          "descricao": "O afastamento será concedido mediante comprovação de que o docente foi aprovado em programa de pós-graduação oferecido por instituição oficial e devidamente recomendado pela CAPES/MEC.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.314,
+          "score_descricao": 0.143,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R06",
+          "descricao": "O programa de pós-graduação deverá ser reconhecido pelo sistema oficial de educação do respectivo País.",
+          "tipo": "condicional",
+          "condicao": "Apenas para cursos realizados no exterior.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.168,
+          "score_descricao": 0.211,
+          "score_tipo": 0.0,
+          "score_condicao": 0.0
+        },
+        {
+          "id": "R11",
+          "descricao": "Assumir o compromisso, mediante termo escrito, de retornar para o Departamento de Lotação, após a realização do curso, para cumprimento do período igual àquele do afastamento, com carga horária não inferior ao regime de trabalho que possuía durante o período do curso.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.341,
+          "score_descricao": 0.176,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R12",
+          "descricao": "Obter expressa autorização do Governador do Estado.",
+          "tipo": "condicional",
+          "condicao": "Apenas para estudos de pós-graduação no exterior.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.044,
+          "score_descricao": 0.056,
+          "score_tipo": 0.0,
+          "score_condicao": 0.0
+        },
+        {
+          "id": "R13",
+          "descricao": "É vedado o estabelecimento de vínculos com programas especiais remunerados durante o período de afastamento.",
+          "tipo": "restritiva",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.196,
+          "score_descricao": 0.12,
+          "score_tipo": 0.0,
+          "score_condicao": 1.0
+        }
+      ],
+      "referencia_nao_coberta": []
+    },
+    {
+      "arquivo": "36_resolucao-no-32-2018-regimento-interno-consepe.pdf",
+      "id_arquivo": "36",
+      "modelo": "gemini-flash-latest",
+      "tokens_extracao": 21509,
+      "status": "avaliado",
+      "metricas": {
+        "precisao": 0.818,
+        "revocacao": 0.727,
+        "f1": 0.77,
+        "threshold_match": 0.5
+      },
+      "contagem": {
+        "regras_extraidas": 11,
+        "regras_na_referencia": 22,
+        "encontradas_na_referencia": 9,
+        "nao_encontradas_na_referencia": 2,
+        "referencia_cobertas": 16,
+        "referencia_nao_cobertas": 6
+      },
+      "referencia": {
+        "nome_documento": "RESOLUÇÃO Nº 32, DE 09 DE OUTUBRO DE 2018."
+      },
+      "regras": [
+        {
+          "id": "R01",
+          "descricao": "Ser do quadro permanente, com experiência mínima de um ano na Instituição.",
+          "tipo": "condicional",
+          "condicao": "Apenas para representantes dos docentes e dos técnico-administrativos.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.173,
+          "score_descricao": 0.188,
+          "score_tipo": 0.0,
+          "score_condicao": 0.231
+        },
+        {
+          "id": "R02",
+          "descricao": "Não estar no exercício de cargo de direção (CD).",
+          "tipo": "restritiva",
+          "condicao": "Apenas para representantes dos docentes e dos técnico-administrativos.",
+          "encontrada_na_referencia": true,
+          "melhor_score_combinado": 0.958,
+          "score_descricao": 1.0,
+          "score_tipo": 1.0,
+          "score_condicao": 0.583
+        },
+        {
+          "id": "R03",
+          "descricao": "Não estar afastado para qualificação.",
+          "tipo": "restritiva",
+          "condicao": "Aplica-se a representantes dos docentes, técnico-administrativos e de cada Campus.",
+          "encontrada_na_referencia": true,
+          "melhor_score_combinado": 0.928,
+          "score_descricao": 1.0,
+          "score_tipo": 1.0,
+          "score_condicao": 0.278
+        },
+        {
+          "id": "R04",
+          "descricao": "Não ser membro titular ou suplente do Conselho Superior (CONSUP).",
+          "tipo": "restritiva",
+          "condicao": "Aplica-se a representantes dos docentes, técnico-administrativos, de cada Campus e discentes.",
+          "encontrada_na_referencia": true,
+          "melhor_score_combinado": 0.926,
+          "score_descricao": 1.0,
+          "score_tipo": 1.0,
+          "score_condicao": 0.263
+        },
+        {
+          "id": "R05",
+          "descricao": "Não ser membro da Comissão Própria de Avaliação (CPA).",
+          "tipo": "restritiva",
+          "condicao": "Aplica-se a representantes dos docentes, técnico-administrativos, de cada Campus e discentes.",
+          "encontrada_na_referencia": true,
+          "melhor_score_combinado": 0.926,
+          "score_descricao": 1.0,
+          "score_tipo": 1.0,
+          "score_condicao": 0.263
+        },
+        {
+          "id": "R06",
+          "descricao": "Não ser membro da Comissão Permanente Pessoal Docente (CPPD).",
+          "tipo": "restritiva",
+          "condicao": "Aplica-se a representantes dos docentes, técnico-administrativos e de cada Campus.",
+          "encontrada_na_referencia": true,
+          "melhor_score_combinado": 0.928,
+          "score_descricao": 1.0,
+          "score_tipo": 1.0,
+          "score_condicao": 0.278
+        },
+        {
+          "id": "R07",
+          "descricao": "Não ser membro da Comissão Interna de Supervisão do Plano de Cargos e Carreira dos Técnicos-Administrativos em Educação (CIS/PCCTAE).",
+          "tipo": "restritiva",
+          "condicao": "Aplica-se a representantes dos docentes, técnico-administrativos e de cada Campus.",
+          "encontrada_na_referencia": true,
+          "melhor_score_combinado": 0.928,
+          "score_descricao": 1.0,
+          "score_tipo": 1.0,
+          "score_condicao": 0.278
+        },
+        {
+          "id": "R08",
+          "descricao": "Ter experiência mínima de um ano na Instituição.",
+          "tipo": "condicional",
+          "condicao": "Apenas para representantes de cada Campus.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.138,
+          "score_descricao": 0.048,
+          "score_tipo": 1.0,
+          "score_condicao": 0.0
+        },
+        {
+          "id": "R09",
+          "descricao": "Não ser membro do Colégio de Dirigentes.",
+          "tipo": "restritiva",
+          "condicao": "Apenas para representantes de cada Campus.",
+          "encontrada_na_referencia": true,
+          "melhor_score_combinado": 0.975,
+          "score_descricao": 1.0,
+          "score_tipo": 1.0,
+          "score_condicao": 0.75
+        },
+        {
+          "id": "R10",
+          "descricao": "Ter matrícula regular ativa nos cursos de educação profissional técnica de nível médio e/ou de educação superior de graduação e pós-graduação.",
+          "tipo": "condicional",
+          "condicao": "Apenas para representantes discentes.",
+          "encontrada_na_referencia": true,
+          "melhor_score_combinado": 0.85,
+          "score_descricao": 1.0,
+          "score_tipo": 0.0,
+          "score_condicao": 0.5
+        },
+        {
+          "id": "R11",
+          "descricao": "Não ter matrícula trancada.",
+          "tipo": "restritiva",
+          "condicao": "Apenas para representantes discentes.",
+          "encontrada_na_referencia": true,
+          "melhor_score_combinado": 0.95,
+          "score_descricao": 1.0,
+          "score_tipo": 1.0,
+          "score_condicao": 0.5
+        }
+      ],
+      "fora_da_referencia": [
+        {
+          "id": "R01",
+          "descricao": "Ser do quadro permanente, com experiência mínima de um ano na Instituição.",
+          "tipo": "condicional",
+          "condicao": "Apenas para representantes dos docentes e dos técnico-administrativos.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.173,
+          "score_descricao": 0.188,
+          "score_tipo": 0.0,
+          "score_condicao": 0.231
+        },
+        {
+          "id": "R08",
+          "descricao": "Ter experiência mínima de um ano na Instituição.",
+          "tipo": "condicional",
+          "condicao": "Apenas para representantes de cada Campus.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.138,
+          "score_descricao": 0.048,
+          "score_tipo": 1.0,
+          "score_condicao": 0.0
+        }
+      ],
+      "referencia_nao_coberta": [
+        {
+          "descricao": "Comunicar o fato à secretaria num prazo de até 48 horas de antecedência da reunião.",
+          "tipo": "condicional",
+          "condicao": "Caso o membro do Conselho não puder comparecer a uma reunião por motivo justificado.",
+          "melhor_score_combinado": 0.138
+        },
+        {
+          "descricao": "Devolver o processo recebido com pedido de vista em até 10 dias úteis após a data da reunião.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "melhor_score_combinado": 0.069
+        },
+        {
+          "descricao": "Não realizar novo pedido de vista no mesmo processo.",
+          "tipo": "restritiva",
+          "condicao": "Salvo se expressamente autorizado pelo Presidente do Conselho.",
+          "melhor_score_combinado": 0.271
+        },
+        {
+          "descricao": "Retornar o processo do qual foi pedido vista ao seu relator.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "melhor_score_combinado": 0.047
+        },
+        {
+          "descricao": "Atender aos seguintes procedimentos na apreciação das matérias: apresentação pelo Presidente, leitura do parecer, discussão mediante inscrição, síntese escrita das propostas, votação e encaminhamentos.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "melhor_score_combinado": 0.048
+        },
+        {
+          "descricao": "Submeter os pareceres ou deliberações emanadas das câmaras e comissões ao CONSEPE para análise, deliberação e/ou homologação.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "melhor_score_combinado": 0.052
+        }
+      ]
+    },
+    {
+      "arquivo": "39_edital-no-29-2024-prpgi-ifba-retificado-em-30-04-2025.PDF.pdf",
+      "id_arquivo": "39",
+      "modelo": "gemini-flash-latest",
+      "tokens_extracao": 21509,
+      "status": "avaliado",
+      "metricas": {
+        "precisao": 0.385,
+        "revocacao": 1.0,
+        "f1": 0.556,
+        "threshold_match": 0.5
+      },
+      "contagem": {
+        "regras_extraidas": 13,
+        "regras_na_referencia": 5,
+        "encontradas_na_referencia": 5,
+        "nao_encontradas_na_referencia": 8,
+        "referencia_cobertas": 5,
+        "referencia_nao_cobertas": 0
+      },
+      "referencia": {
+        "nome_documento": "edital-no-29-2024-prpgi"
+      },
+      "regras": [
+        {
+          "id": "R01",
+          "descricao": "Ser o responsável pelo Laboratório onde estão as instalações/equipamento multiusuário, conforme declaração da direção do Campus.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": true,
+          "melhor_score_combinado": 0.745,
+          "score_descricao": 0.682,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R02",
+          "descricao": "O Laboratório e os equipamentos deverão estar registrados junto à PRPGI.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": true,
+          "melhor_score_combinado": 0.5,
+          "score_descricao": 0.375,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R03",
+          "descricao": "O proponente precisa estar adimplente com todos os programas da PRPGI.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": true,
+          "melhor_score_combinado": 0.782,
+          "score_descricao": 0.727,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R04",
+          "descricao": "O proponente deverá pertencer ao quadro de docentes ativos e permanentes de um programa de pós-graduação stricto sensu do IFBA.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": true,
+          "melhor_score_combinado": 0.874,
+          "score_descricao": 0.842,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R05",
+          "descricao": "As propostas deverão estar devidamente justificadas quanto à utilização dos recursos no âmbito da pós-graduação.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": true,
+          "melhor_score_combinado": 0.812,
+          "score_descricao": 0.765,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R06",
+          "descricao": "Os equipamentos objeto da proposta devem ter sido incorporados ao patrimônio do IFBA.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.292,
+          "score_descricao": 0.115,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R07",
+          "descricao": "Encaminhar a proposta via SUAP, utilizando a aba 'Pesquisa' > 'Projetos' > 'Submeter projeto' e escolher o Edital.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.297,
+          "score_descricao": 0.121,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R08",
+          "descricao": "Preencher a aba 'Dados do projeto' com identificações da proposta (escrevendo 'ver arquivo PDF' nas demais abas se solicitado pelo sistema).",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.311,
+          "score_descricao": 0.139,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R09",
+          "descricao": "Submeter um arquivo em PDF único, contendo, nesta ordem: Dados da proposta (Anexo 01) evidenciando os itens pontuados no Anexo 02, e Declaração da Direção Geral do Campus informando o responsável pelo Laboratório onde está instalado o(s) equipamento(s).",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.418,
+          "score_descricao": 0.273,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R10",
+          "descricao": "Anexar o arquivo PDF na aba 'Equipe' do SUAP.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.233,
+          "score_descricao": 0.042,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R11",
+          "descricao": "O valor total solicitado deve contemplar, quando houver, as despesas acessórias incidentes sobre as aquisições/contratações (ex: frete, taxas de importação).",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.262,
+          "score_descricao": 0.077,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R12",
+          "descricao": "Para a implementação do recurso financeiro, a empresa contratada para a prestação do serviço não poderá apresentar nenhuma pendência fiscal.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.257,
+          "score_descricao": 0.071,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R13",
+          "descricao": "Cada proposta poderá requerer e ser contemplada com até R$ 60.000,00.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.24,
+          "score_descricao": 0.05,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        }
+      ],
+      "fora_da_referencia": [
+        {
+          "id": "R06",
+          "descricao": "Os equipamentos objeto da proposta devem ter sido incorporados ao patrimônio do IFBA.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.292,
+          "score_descricao": 0.115,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R07",
+          "descricao": "Encaminhar a proposta via SUAP, utilizando a aba 'Pesquisa' > 'Projetos' > 'Submeter projeto' e escolher o Edital.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.297,
+          "score_descricao": 0.121,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R08",
+          "descricao": "Preencher a aba 'Dados do projeto' com identificações da proposta (escrevendo 'ver arquivo PDF' nas demais abas se solicitado pelo sistema).",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.311,
+          "score_descricao": 0.139,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R09",
+          "descricao": "Submeter um arquivo em PDF único, contendo, nesta ordem: Dados da proposta (Anexo 01) evidenciando os itens pontuados no Anexo 02, e Declaração da Direção Geral do Campus informando o responsável pelo Laboratório onde está instalado o(s) equipamento(s).",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.418,
+          "score_descricao": 0.273,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R10",
+          "descricao": "Anexar o arquivo PDF na aba 'Equipe' do SUAP.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.233,
+          "score_descricao": 0.042,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R11",
+          "descricao": "O valor total solicitado deve contemplar, quando houver, as despesas acessórias incidentes sobre as aquisições/contratações (ex: frete, taxas de importação).",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.262,
+          "score_descricao": 0.077,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R12",
+          "descricao": "Para a implementação do recurso financeiro, a empresa contratada para a prestação do serviço não poderá apresentar nenhuma pendência fiscal.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.257,
+          "score_descricao": 0.071,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R13",
+          "descricao": "Cada proposta poderá requerer e ser contemplada com até R$ 60.000,00.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.24,
+          "score_descricao": 0.05,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        }
+      ],
+      "referencia_nao_coberta": []
+    },
+    {
+      "arquivo": "41_EditalIngressoSimplificado2026.2CursosSubsequentes.docx3.pdf",
+      "id_arquivo": "41",
+      "modelo": "gemini-flash-latest",
+      "tokens_extracao": 21509,
+      "status": "avaliado",
+      "metricas": {
+        "precisao": 0.0,
+        "revocacao": 0.0,
+        "f1": 0.0,
+        "threshold_match": 0.5
+      },
+      "contagem": {
+        "regras_extraidas": 21,
+        "regras_na_referencia": 8,
+        "encontradas_na_referencia": 0,
+        "nao_encontradas_na_referencia": 21,
+        "referencia_cobertas": 0,
+        "referencia_nao_cobertas": 8
+      },
+      "referencia": {
+        "nome_documento": "INGRESSO 2026.2 - SIMPLIFICADO SUBSEQUENTE 2026.2 - 2026.2 SUBSEQUENTE INGRESSO SIMPLIFICADO"
+      },
+      "regras": [
+        {
+          "id": "R01",
+          "descricao": "Ter concluído o Ensino Médio até a data da matrícula no IFBA.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.294,
+          "score_descricao": 0.118,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R02",
+          "descricao": "Realizar a inscrição exclusivamente pela internet, no endereço eletrônico indicado, dentro do período estabelecido no cronograma.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.247,
+          "score_descricao": 0.059,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R03",
+          "descricao": "No ato da inscrição, escolher duas opções de curso para o mesmo Campus e forma de oferta, caso haja essa possibilidade no campus escolhido.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.3,
+          "score_descricao": 0.125,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R04",
+          "descricao": "Fornecer obrigatoriamente o número do CPF exclusivamente da própria pessoa candidata (proibido CPF de terceiros).",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.32,
+          "score_descricao": 0.15,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R05",
+          "descricao": "Fornecer conta ativa de e-mail da pessoa candidata e/ou do seu responsável legal (em caso de menor de 18 anos).",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.347,
+          "score_descricao": 0.184,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R06",
+          "descricao": "Fornecer número de documento de identidade oficial (RG, CIN, Carteira de Trabalho, CNH, Carteira Profissional ou Passaporte) exclusivamente da própria pessoa candidata.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.296,
+          "score_descricao": 0.12,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R07",
+          "descricao": "Fornecer telefone de contato da pessoa candidata e do seu responsável legal (em caso de menor de 18 anos).",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.33,
+          "score_descricao": 0.162,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R08",
+          "descricao": "Realizar apenas 1 (uma) inscrição por pessoa candidata.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.307,
+          "score_descricao": 0.133,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R09",
+          "descricao": "Ter cursado o Ensino Médio integralmente (do 1º ao 3º ano) em escolas públicas brasileiras ou comunitárias conveniadas.",
+          "tipo": "condicional",
+          "condicao": "Apenas para candidatos que optarem por concorrer às vagas de cotas para escolas públicas.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.151,
+          "score_descricao": 0.189,
+          "score_tipo": 0.0,
+          "score_condicao": 0.0
+        },
+        {
+          "id": "R10",
+          "descricao": "Não ter estudado em escolas particulares em nenhum período do Ensino Médio, mesmo na condição de bolsista integral.",
+          "tipo": "restritiva",
+          "condicao": "Apenas para candidatos que optarem por concorrer às vagas de cotas para escolas públicas.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.082,
+          "score_descricao": 0.103,
+          "score_tipo": 0.0,
+          "score_condicao": 0.0
+        },
+        {
+          "id": "R11",
+          "descricao": "Enviar via Gov.br a Autodeclaração de Pessoa Negra (ANEXO 3) preenchida e assinada.",
+          "tipo": "condicional",
+          "condicao": "Apenas para candidatos que optarem por concorrer às vagas de cotas para pessoas pretas ou pardas.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.18,
+          "score_descricao": 0.1,
+          "score_tipo": 1.0,
+          "score_condicao": 0.0
+        },
+        {
+          "id": "R12",
+          "descricao": "Enviar via Gov.br a Autodeclaração de Pertencimento Étnico Indígena (ANEXO 4) preenchida e assinada.",
+          "tipo": "condicional",
+          "condicao": "Apenas para candidatos que optarem por concorrer às vagas de cotas para indígenas.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.15,
+          "score_descricao": 0.062,
+          "score_tipo": 1.0,
+          "score_condicao": 0.0
+        },
+        {
+          "id": "R13",
+          "descricao": "Enviar via Gov.br a Autodeclaração de Pertencimento Quilombola (ANEXO 5) preenchida e assinada, além de certidão de autodefinição da Fundação Cultural Palmares e declaração de residência assinada pela associação quilombola e testemunhas.",
+          "tipo": "condicional",
+          "condicao": "Apenas para candidatos que optarem por concorrer às vagas de cotas para quilombolas.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.157,
+          "score_descricao": 0.071,
+          "score_tipo": 1.0,
+          "score_condicao": 0.0
+        },
+        {
+          "id": "R14",
+          "descricao": "Enviar via Gov.br a Declaração de Composição Familiar (ANEXO 6) e documentos de comprovação de renda.",
+          "tipo": "condicional",
+          "condicao": "Apenas para candidatos que optarem por concorrer às vagas de cotas com renda igual ou inferior a 1 salário-mínimo per capita.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.153,
+          "score_descricao": 0.062,
+          "score_tipo": 1.0,
+          "score_condicao": 0.032
+        },
+        {
+          "id": "R15",
+          "descricao": "Apresentar laudo médico atestando a espécie, grau ou nível de deficiência com referência ao CID, além de exames específicos conforme o tipo de deficiência.",
+          "tipo": "condicional",
+          "condicao": "Apenas para candidatos que optarem por concorrer às vagas de cotas para pessoas com deficiência (PCD).",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.142,
+          "score_descricao": 0.053,
+          "score_tipo": 1.0,
+          "score_condicao": 0.0
+        },
+        {
+          "id": "R16",
+          "descricao": "Apresentar Histórico Escolar completo do 1º ao 3º ano do Ensino Médio e Certificado de conclusão do Ensino Médio.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.337,
+          "score_descricao": 0.171,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R17",
+          "descricao": "Apresentar Documento Oficial de Identificação com foto, CPF, Certidão de Nascimento ou Casamento, 1 foto 3x4 atual, Comprovante de Residência atual e Comprovante de Vacinação Antitetânica.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.256,
+          "score_descricao": 0.07,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R18",
+          "descricao": "Apresentar Título de Eleitor com identificação biométrica e comprovação de quitação eleitoral.",
+          "tipo": "condicional",
+          "condicao": "Apenas para candidatos maiores de 18 anos.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.157,
+          "score_descricao": 0.071,
+          "score_tipo": 1.0,
+          "score_condicao": 0.0
+        },
+        {
+          "id": "R19",
+          "descricao": "Apresentar prova de estar em dia com as obrigações militares.",
+          "tipo": "condicional",
+          "condicao": "Apenas para candidatos brasileiros do sexo masculino maiores de 18 anos.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.129,
+          "score_descricao": 0.036,
+          "score_tipo": 1.0,
+          "score_condicao": 0.0
+        },
+        {
+          "id": "R20",
+          "descricao": "Apresentar documento oficial de identificação de um responsável legal.",
+          "tipo": "condicional",
+          "condicao": "Apenas para candidatos menores de 18 anos.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.152,
+          "score_descricao": 0.059,
+          "score_tipo": 1.0,
+          "score_condicao": 0.053
+        },
+        {
+          "id": "R21",
+          "descricao": "Apresentar visto de permanência no Brasil.",
+          "tipo": "condicional",
+          "condicao": "Apenas para candidatos estrangeiros.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.17,
+          "score_descricao": 0.087,
+          "score_tipo": 1.0,
+          "score_condicao": 0.0
+        }
+      ],
+      "fora_da_referencia": [
+        {
+          "id": "R01",
+          "descricao": "Ter concluído o Ensino Médio até a data da matrícula no IFBA.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.294,
+          "score_descricao": 0.118,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R02",
+          "descricao": "Realizar a inscrição exclusivamente pela internet, no endereço eletrônico indicado, dentro do período estabelecido no cronograma.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.247,
+          "score_descricao": 0.059,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R03",
+          "descricao": "No ato da inscrição, escolher duas opções de curso para o mesmo Campus e forma de oferta, caso haja essa possibilidade no campus escolhido.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.3,
+          "score_descricao": 0.125,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R04",
+          "descricao": "Fornecer obrigatoriamente o número do CPF exclusivamente da própria pessoa candidata (proibido CPF de terceiros).",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.32,
+          "score_descricao": 0.15,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R05",
+          "descricao": "Fornecer conta ativa de e-mail da pessoa candidata e/ou do seu responsável legal (em caso de menor de 18 anos).",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.347,
+          "score_descricao": 0.184,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R06",
+          "descricao": "Fornecer número de documento de identidade oficial (RG, CIN, Carteira de Trabalho, CNH, Carteira Profissional ou Passaporte) exclusivamente da própria pessoa candidata.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.296,
+          "score_descricao": 0.12,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R07",
+          "descricao": "Fornecer telefone de contato da pessoa candidata e do seu responsável legal (em caso de menor de 18 anos).",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.33,
+          "score_descricao": 0.162,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R08",
+          "descricao": "Realizar apenas 1 (uma) inscrição por pessoa candidata.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.307,
+          "score_descricao": 0.133,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R09",
+          "descricao": "Ter cursado o Ensino Médio integralmente (do 1º ao 3º ano) em escolas públicas brasileiras ou comunitárias conveniadas.",
+          "tipo": "condicional",
+          "condicao": "Apenas para candidatos que optarem por concorrer às vagas de cotas para escolas públicas.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.151,
+          "score_descricao": 0.189,
+          "score_tipo": 0.0,
+          "score_condicao": 0.0
+        },
+        {
+          "id": "R10",
+          "descricao": "Não ter estudado em escolas particulares em nenhum período do Ensino Médio, mesmo na condição de bolsista integral.",
+          "tipo": "restritiva",
+          "condicao": "Apenas para candidatos que optarem por concorrer às vagas de cotas para escolas públicas.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.082,
+          "score_descricao": 0.103,
+          "score_tipo": 0.0,
+          "score_condicao": 0.0
+        },
+        {
+          "id": "R11",
+          "descricao": "Enviar via Gov.br a Autodeclaração de Pessoa Negra (ANEXO 3) preenchida e assinada.",
+          "tipo": "condicional",
+          "condicao": "Apenas para candidatos que optarem por concorrer às vagas de cotas para pessoas pretas ou pardas.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.18,
+          "score_descricao": 0.1,
+          "score_tipo": 1.0,
+          "score_condicao": 0.0
+        },
+        {
+          "id": "R12",
+          "descricao": "Enviar via Gov.br a Autodeclaração de Pertencimento Étnico Indígena (ANEXO 4) preenchida e assinada.",
+          "tipo": "condicional",
+          "condicao": "Apenas para candidatos que optarem por concorrer às vagas de cotas para indígenas.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.15,
+          "score_descricao": 0.062,
+          "score_tipo": 1.0,
+          "score_condicao": 0.0
+        },
+        {
+          "id": "R13",
+          "descricao": "Enviar via Gov.br a Autodeclaração de Pertencimento Quilombola (ANEXO 5) preenchida e assinada, além de certidão de autodefinição da Fundação Cultural Palmares e declaração de residência assinada pela associação quilombola e testemunhas.",
+          "tipo": "condicional",
+          "condicao": "Apenas para candidatos que optarem por concorrer às vagas de cotas para quilombolas.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.157,
+          "score_descricao": 0.071,
+          "score_tipo": 1.0,
+          "score_condicao": 0.0
+        },
+        {
+          "id": "R14",
+          "descricao": "Enviar via Gov.br a Declaração de Composição Familiar (ANEXO 6) e documentos de comprovação de renda.",
+          "tipo": "condicional",
+          "condicao": "Apenas para candidatos que optarem por concorrer às vagas de cotas com renda igual ou inferior a 1 salário-mínimo per capita.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.153,
+          "score_descricao": 0.062,
+          "score_tipo": 1.0,
+          "score_condicao": 0.032
+        },
+        {
+          "id": "R15",
+          "descricao": "Apresentar laudo médico atestando a espécie, grau ou nível de deficiência com referência ao CID, além de exames específicos conforme o tipo de deficiência.",
+          "tipo": "condicional",
+          "condicao": "Apenas para candidatos que optarem por concorrer às vagas de cotas para pessoas com deficiência (PCD).",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.142,
+          "score_descricao": 0.053,
+          "score_tipo": 1.0,
+          "score_condicao": 0.0
+        },
+        {
+          "id": "R16",
+          "descricao": "Apresentar Histórico Escolar completo do 1º ao 3º ano do Ensino Médio e Certificado de conclusão do Ensino Médio.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.337,
+          "score_descricao": 0.171,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R17",
+          "descricao": "Apresentar Documento Oficial de Identificação com foto, CPF, Certidão de Nascimento ou Casamento, 1 foto 3x4 atual, Comprovante de Residência atual e Comprovante de Vacinação Antitetânica.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.256,
+          "score_descricao": 0.07,
+          "score_tipo": 1.0,
+          "score_condicao": 1.0
+        },
+        {
+          "id": "R18",
+          "descricao": "Apresentar Título de Eleitor com identificação biométrica e comprovação de quitação eleitoral.",
+          "tipo": "condicional",
+          "condicao": "Apenas para candidatos maiores de 18 anos.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.157,
+          "score_descricao": 0.071,
+          "score_tipo": 1.0,
+          "score_condicao": 0.0
+        },
+        {
+          "id": "R19",
+          "descricao": "Apresentar prova de estar em dia com as obrigações militares.",
+          "tipo": "condicional",
+          "condicao": "Apenas para candidatos brasileiros do sexo masculino maiores de 18 anos.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.129,
+          "score_descricao": 0.036,
+          "score_tipo": 1.0,
+          "score_condicao": 0.0
+        },
+        {
+          "id": "R20",
+          "descricao": "Apresentar documento oficial de identificação de um responsável legal.",
+          "tipo": "condicional",
+          "condicao": "Apenas para candidatos menores de 18 anos.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.152,
+          "score_descricao": 0.059,
+          "score_tipo": 1.0,
+          "score_condicao": 0.053
+        },
+        {
+          "id": "R21",
+          "descricao": "Apresentar visto de permanência no Brasil.",
+          "tipo": "condicional",
+          "condicao": "Apenas para candidatos estrangeiros.",
+          "encontrada_na_referencia": false,
+          "melhor_score_combinado": 0.17,
+          "score_descricao": 0.087,
+          "score_tipo": 1.0,
+          "score_condicao": 0.0
+        }
+      ],
+      "referencia_nao_coberta": [
+        {
+          "descricao": "Acessar o sistema online de inscrições do Ingresso Simplificado 2026.2 disponível no link: https://portal.ifba.edu.br/proen/2026/simplificadosub/2.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "melhor_score_combinado": 0.28
+        },
+        {
+          "descricao": "Criar seu cadastro no sistema, informando o número de CPF da própria pessoa candidata e criando uma senha pessoal.",
+          "tipo": "condicional",
+          "condicao": "Caso a pessoa candidata ainda não tenha cadastro no sistema.",
+          "melhor_score_combinado": 0.256
+        },
+        {
+          "descricao": "Informar todos os dados pessoais solicitados da pessoa candidata.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "melhor_score_combinado": 0.32
+        },
+        {
+          "descricao": "Informar a escolaridade e tipos de escola (se pública ou privada) em que a pessoa candidata cursou todo o Ensino Médio (incluso 3º ano em curso, se for o caso).",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "melhor_score_combinado": 0.347
+        },
+        {
+          "descricao": "Escolher o campus onde deseja estudar.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "melhor_score_combinado": 0.3
+        },
+        {
+          "descricao": "Selecionar um curso para o qual deseja se inscrever como 1ª opção.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "melhor_score_combinado": 0.28
+        },
+        {
+          "descricao": "Selecionar um curso diferente para se inscrever como 2ª opção.",
+          "tipo": "condicional",
+          "condicao": "Caso o campus escolhido disponha de mais de um curso na mesma forma de oferta.",
+          "melhor_score_combinado": 0.152
+        },
+        {
+          "descricao": "Escolher o tipo de vaga que deseja concorrer, se por reservas de vagas (cotas) ou Ampla Concorrência, observando se atende aos critérios para cada tipo de vaga.",
+          "tipo": "obrigatória",
+          "condicao": null,
+          "melhor_score_combinado": 0.282
+        }
+      ]
+    }
+  ]
+}

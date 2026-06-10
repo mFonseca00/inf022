@@ -1,0 +1,168 @@
+{
+  "arquivo": "41_EditalIngressoSimplificado2026.2CursosSubsequentes.docx3.pdf",
+  "id_arquivo": "41",
+  "modelo": "gemini-flash-latest",
+  "tokens": null,
+  "tokens_media_lote": 21509,
+  "arquivos_no_lote": 4,
+  "parametros_llm": {
+    "provider": "google",
+    "model": "gemini-flash-latest",
+    "temperature": 0.0,
+    "max_tokens": null,
+    "timeout": null,
+    "top_p": null,
+    "top_k": null,
+    "base_url": null
+  },
+  "prompt_utilizado": "prompt_extracao_regras_v4.md",
+  "regras": [
+    {
+      "id": "R01",
+      "descricao": "Ter concluído o Ensino Médio até a data da matrícula no IFBA.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 1.2.1 e Item 3.1"
+    },
+    {
+      "id": "R02",
+      "descricao": "Realizar a inscrição exclusivamente pela internet, no endereço eletrônico indicado, dentro do período estabelecido no cronograma.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 4.1"
+    },
+    {
+      "id": "R03",
+      "descricao": "No ato da inscrição, escolher duas opções de curso para o mesmo Campus e forma de oferta, caso haja essa possibilidade no campus escolhido.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 4.4"
+    },
+    {
+      "id": "R04",
+      "descricao": "Fornecer obrigatoriamente o número do CPF exclusivamente da própria pessoa candidata (proibido CPF de terceiros).",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 4.5, a e Item 4.9"
+    },
+    {
+      "id": "R05",
+      "descricao": "Fornecer conta ativa de e-mail da pessoa candidata e/ou do seu responsável legal (em caso de menor de 18 anos).",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 4.5, b"
+    },
+    {
+      "id": "R06",
+      "descricao": "Fornecer número de documento de identidade oficial (RG, CIN, Carteira de Trabalho, CNH, Carteira Profissional ou Passaporte) exclusivamente da própria pessoa candidata.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 4.5, c"
+    },
+    {
+      "id": "R07",
+      "descricao": "Fornecer telefone de contato da pessoa candidata e do seu responsável legal (em caso de menor de 18 anos).",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 4.5, d"
+    },
+    {
+      "id": "R08",
+      "descricao": "Realizar apenas 1 (uma) inscrição por pessoa candidata.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 4.12"
+    },
+    {
+      "id": "R09",
+      "descricao": "Ter cursado o Ensino Médio integralmente (do 1º ao 3º ano) em escolas públicas brasileiras ou comunitárias conveniadas.",
+      "tipo": "condicional",
+      "condicao": "Apenas para candidatos que optarem por concorrer às vagas de cotas para escolas públicas.",
+      "referencia": "Item 6.1 e Item 6.1.4"
+    },
+    {
+      "id": "R10",
+      "descricao": "Não ter estudado em escolas particulares em nenhum período do Ensino Médio, mesmo na condição de bolsista integral.",
+      "tipo": "restritiva",
+      "condicao": "Apenas para candidatos que optarem por concorrer às vagas de cotas para escolas públicas.",
+      "referencia": "Item 6.1.5"
+    },
+    {
+      "id": "R11",
+      "descricao": "Enviar via Gov.br a Autodeclaração de Pessoa Negra (ANEXO 3) preenchida e assinada.",
+      "tipo": "condicional",
+      "condicao": "Apenas para candidatos que optarem por concorrer às vagas de cotas para pessoas pretas ou pardas.",
+      "referencia": "Item 6.4.1, a e Item 14.3.4"
+    },
+    {
+      "id": "R12",
+      "descricao": "Enviar via Gov.br a Autodeclaração de Pertencimento Étnico Indígena (ANEXO 4) preenchida e assinada.",
+      "tipo": "condicional",
+      "condicao": "Apenas para candidatos que optarem por concorrer às vagas de cotas para indígenas.",
+      "referencia": "Item 6.4.1, b e Item 14.6"
+    },
+    {
+      "id": "R13",
+      "descricao": "Enviar via Gov.br a Autodeclaração de Pertencimento Quilombola (ANEXO 5) preenchida e assinada, além de certidão de autodefinição da Fundação Cultural Palmares e declaração de residência assinada pela associação quilombola e testemunhas.",
+      "tipo": "condicional",
+      "condicao": "Apenas para candidatos que optarem por concorrer às vagas de cotas para quilombolas.",
+      "referencia": "Item 6.4.1, c, Item 8.1.2 e Item 14.7"
+    },
+    {
+      "id": "R14",
+      "descricao": "Enviar via Gov.br a Declaração de Composição Familiar (ANEXO 6) e documentos de comprovação de renda.",
+      "tipo": "condicional",
+      "condicao": "Apenas para candidatos que optarem por concorrer às vagas de cotas com renda igual ou inferior a 1 salário-mínimo per capita.",
+      "referencia": "Item 6.4.2 e Item 14.5.2"
+    },
+    {
+      "id": "R15",
+      "descricao": "Apresentar laudo médico atestando a espécie, grau ou nível de deficiência com referência ao CID, além de exames específicos conforme o tipo de deficiência.",
+      "tipo": "condicional",
+      "condicao": "Apenas para candidatos que optarem por concorrer às vagas de cotas para pessoas com deficiência (PCD).",
+      "referencia": "Item 7.4.2, Item 7.4.3 e Item 7.5"
+    },
+    {
+      "id": "R16",
+      "descricao": "Apresentar Histórico Escolar completo do 1º ao 3º ano do Ensino Médio e Certificado de conclusão do Ensino Médio.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 15.6, I e II"
+    },
+    {
+      "id": "R17",
+      "descricao": "Apresentar Documento Oficial de Identificação com foto, CPF, Certidão de Nascimento ou Casamento, 1 foto 3x4 atual, Comprovante de Residência atual e Comprovante de Vacinação Antitetânica.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 15.6, III, IV, V, VI, VII e IX"
+    },
+    {
+      "id": "R18",
+      "descricao": "Apresentar Título de Eleitor com identificação biométrica e comprovação de quitação eleitoral.",
+      "tipo": "condicional",
+      "condicao": "Apenas para candidatos maiores de 18 anos.",
+      "referencia": "Item 15.6, VIII"
+    },
+    {
+      "id": "R19",
+      "descricao": "Apresentar prova de estar em dia com as obrigações militares.",
+      "tipo": "condicional",
+      "condicao": "Apenas para candidatos brasileiros do sexo masculino maiores de 18 anos.",
+      "referencia": "Item 15.6.4, a"
+    },
+    {
+      "id": "R20",
+      "descricao": "Apresentar documento oficial de identificação de um responsável legal.",
+      "tipo": "condicional",
+      "condicao": "Apenas para candidatos menores de 18 anos.",
+      "referencia": "Item 15.6.4, b"
+    },
+    {
+      "id": "R21",
+      "descricao": "Apresentar visto de permanência no Brasil.",
+      "tipo": "condicional",
+      "condicao": "Apenas para candidatos estrangeiros.",
+      "referencia": "Item 15.6.4, c"
+    }
+  ]
+}

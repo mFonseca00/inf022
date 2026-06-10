@@ -70,7 +70,7 @@ def rule_similarity(extracted: dict, reference: dict) -> dict:
     else:
         cond_score = token_overlap(str(cond_extr), str(cond_ref))
 
-    combined = round(0.6 * desc_score + 0.2 * tipo_score + 0.2 * cond_score, 3)
+    combined = round(0.8 * desc_score + 0.1 * tipo_score + 0.1 * cond_score, 3)
     return {
         "score_descricao": round(desc_score, 3),
         "score_tipo":      round(tipo_score, 3),
@@ -237,12 +237,12 @@ def evaluate_file(json_path: Path, spreadsheet_data: dict[str, dict]) -> dict | 
             "threshold_match": MATCH_THRESHOLD,
         },
         "contagem": {
-            "regras_extraidas":              n_extraidas,
-            "regras_na_referencia":          n_referencia,
-            "encontradas_na_referencia":     n_encontradas,
-            "nao_encontradas_na_referencia": n_extraidas - n_encontradas,
-            "referencia_cobertas":           n_cobertas,
-            "referencia_nao_cobertas":       n_referencia - n_cobertas,
+            "total_extraidas":      n_extraidas,
+            "total_no_gabarito":    n_referencia,
+            "extraidas_com_match":  n_encontradas,
+            "extraidas_sem_match":  n_extraidas - n_encontradas,
+            "gabarito_cobertas":    n_cobertas,
+            "gabarito_perdidas":    n_referencia - n_cobertas,
         },
         "referencia": {
             "nome_documento": ref["nome"],
@@ -298,15 +298,15 @@ def run_evaluation(results_dir: Path, spreadsheet_path: Path = DEFAULT_SPREADSHE
             m = result["metricas"]
             print(
                 f"  OK  {json_path.name}  |  "
-                f"extraidas={c['regras_extraidas']}  ref={c['regras_na_referencia']}  "
+                f"extraidas={c['total_extraidas']}  ref={c['total_no_gabarito']}  "
                 f"P={m['precisao']:.2f}  R={m['revocacao']:.2f}  F1={m['f1']:.2f}"
             )
 
     avaliados = [r for r in resultados if r["status"] == "avaliado"]
-    total_extraidas  = sum(r["contagem"]["regras_extraidas"]          for r in avaliados)
-    total_referencia = sum(r["contagem"]["regras_na_referencia"]       for r in avaliados)
-    total_encontradas = sum(r["contagem"]["encontradas_na_referencia"] for r in avaliados)
-    total_cobertas   = sum(r["contagem"]["referencia_cobertas"]        for r in avaliados)
+    total_extraidas  = sum(r["contagem"]["total_extraidas"]       for r in avaliados)
+    total_referencia = sum(r["contagem"]["total_no_gabarito"]     for r in avaliados)
+    total_encontradas = sum(r["contagem"]["extraidas_com_match"]  for r in avaliados)
+    total_cobertas   = sum(r["contagem"]["gabarito_cobertas"]     for r in avaliados)
     total_tokens     = sum(r.get("tokens_extracao") or r.get("tokens_media_lote") or 0 for r in resultados)
 
     precisao_geral  = round(total_encontradas / total_extraidas,  3) if total_extraidas  else 0.0
@@ -323,17 +323,18 @@ def run_evaluation(results_dir: Path, spreadsheet_path: Path = DEFAULT_SPREADSHE
 
     output = {
         "resumo": {
-            "total_arquivos_avaliados":        len(avaliados),
-            "total_sem_referencia":            len(resultados) - len(avaliados),
-            "total_regras_extraidas":          total_extraidas,
-            "total_regras_referencia":         total_referencia,
-            "total_encontradas_na_referencia": total_encontradas,
-            "total_referencia_cobertas":       total_cobertas,
-            "precisao":                        precisao_geral,
-            "revocacao":                       revocacao_geral,
-            "f1":                              f1_geral,
-            "total_tokens_extracao":           total_tokens,
-            "threshold_match":                 MATCH_THRESHOLD,
+            "total_arquivos_avaliados": len(avaliados),
+            "total_sem_referencia":     len(resultados) - len(avaliados),
+            "total_extraidas":          total_extraidas,
+            "total_no_gabarito":        total_referencia,
+            "extraidas_com_match":      total_encontradas,
+            "gabarito_cobertas":        total_cobertas,
+            "gabarito_perdidas":        total_referencia - total_cobertas,
+            "precisao":                 precisao_geral,
+            "revocacao":                revocacao_geral,
+            "f1":                       f1_geral,
+            "total_tokens_extracao":    total_tokens,
+            "threshold_match":          MATCH_THRESHOLD,
         },
         **({"lotes": lotes} if lotes is not None else {}),
         "avaliacoes": resultados,

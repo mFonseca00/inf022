@@ -1,0 +1,105 @@
+{
+  "arquivo": "39_edital-no-29-2024-prpgi-ifba-retificado-em-30-04-2025.PDF.pdf",
+  "id_arquivo": "39",
+  "modelo": "gemini-flash-latest",
+  "tokens": null,
+  "tokens_media_lote": 21253,
+  "arquivos_no_lote": 4,
+  "parametros_llm": {
+    "provider": "google",
+    "model": "gemini-flash-latest",
+    "temperature": 0.0,
+    "max_tokens": null,
+    "timeout": null,
+    "top_p": null,
+    "top_k": null,
+    "base_url": null
+  },
+  "prompt_utilizado": "prompt_extracao_regras_v4.md",
+  "regras": [
+    {
+      "id": "R01",
+      "descricao": "Ser o responsável pelo Laboratório onde estão as instalações/equipamento multiusuário, conforme declaração da direção do Campus.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 3.1"
+    },
+    {
+      "id": "R02",
+      "descricao": "O Laboratório e os equipamentos deverão estar registrados junto à PRPGI.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 3.2"
+    },
+    {
+      "id": "R03",
+      "descricao": "O proponente precisa estar adimplente com todos os programas da PRPGI.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 3.3"
+    },
+    {
+      "id": "R04",
+      "descricao": "O proponente deverá pertencer ao quadro de docentes ativos e permanentes de um programa de pós-graduação stricto sensu do IFBA.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 3.4"
+    },
+    {
+      "id": "R05",
+      "descricao": "As propostas deverão estar devidamente justificadas quanto à utilização dos recursos no âmbito da pós-graduação.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 3.5"
+    },
+    {
+      "id": "R06",
+      "descricao": "Serão contemplados, exclusivamente, equipamentos que foram incorporados ao patrimônio do IFBA.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 5.3"
+    },
+    {
+      "id": "R07",
+      "descricao": "As propostas serão encaminhadas via SUAP, utilizando a aba ‘Pesquisa’ > ‘Projetos’ > ‘Submeter projeto’, escolhendo o Edital correspondente.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 5.4"
+    },
+    {
+      "id": "R08",
+      "descricao": "Submeter um arquivo em PDF único, contendo, nesta ordem: Dados da proposta (Anexo 01) e Declaração da Direção Geral do Campus informando o responsável pelo Laboratório onde está instalado o(s) equipamento(s).",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 5.5"
+    },
+    {
+      "id": "R09",
+      "descricao": "O arquivo PDF deverá ser anexado na aba ‘Equipe’ do SUAP.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 5.6"
+    },
+    {
+      "id": "R10",
+      "descricao": "Para a implementação do recurso financeiro, a empresa contratada para a prestação do serviço não poderá apresentar nenhuma pendência fiscal.",
+      "tipo": "restritiva",
+      "condicao": null,
+      "referencia": "Item 5.9"
+    },
+    {
+      "id": "R11",
+      "descricao": "O valor total solicitado deve contemplar, quando houver, as despesas acessórias incidentes sobre as aquisições/contratações (ex: frete, taxas de importação).",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 5.10"
+    },
+    {
+      "id": "R12",
+      "descricao": "Cada proposta poderá requerer e ser contemplada com até R$ 60.000,00 (sessenta mil reais).",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 8.2"
+    }
+  ]
+}
