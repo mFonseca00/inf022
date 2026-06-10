@@ -1,0 +1,77 @@
+{
+  "arquivo": "01_documento_orientador_emissao_de_diploma-ensino_medio-ifba.pdf",
+  "id_arquivo": "01",
+  "modelo": "gemini-flash-latest",
+  "tokens": null,
+  "tokens_media_lote": 14917,
+  "arquivos_no_lote": 4,
+  "parametros_llm": {
+    "provider": "google",
+    "model": "gemini-flash-latest",
+    "temperature": 0.0,
+    "max_tokens": null,
+    "timeout": null,
+    "top_p": null,
+    "top_k": null,
+    "base_url": null
+  },
+  "prompt_utilizado": "prompt_extracao_regras_v4.md",
+  "regras": [
+    {
+      "id": "R01",
+      "descricao": "Preencher o formulário de requerimento.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Passo 1"
+    },
+    {
+      "id": "R02",
+      "descricao": "Anexar certidão de nascimento ou casamento.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 2.1"
+    },
+    {
+      "id": "R03",
+      "descricao": "Anexar RG e CPF.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 2.2"
+    },
+    {
+      "id": "R04",
+      "descricao": "Anexar comprovante de quitação com a justiça eleitoral.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 2.3"
+    },
+    {
+      "id": "R05",
+      "descricao": "Anexar comprovante de quitação com o alistamento militar.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 2.4"
+    },
+    {
+      "id": "R06",
+      "descricao": "Anexar histórico do curso concluído.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 2.5"
+    },
+    {
+      "id": "R07",
+      "descricao": "Anexar histórico de conclusão do ensino fundamental.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 2.6"
+    },
+    {
+      "id": "R08",
+      "descricao": "Anexar histórico de conclusão do ensino médio.",
+      "tipo": "condicional",
+      "condicao": "Apenas para candidatos do curso subsequente.",
+      "referencia": "Item 2.7"
+    }
+  ]
+}

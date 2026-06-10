@@ -1,0 +1,98 @@
+{
+  "arquivo": "23_Resolucao-N-1110-2015-afastamento-pos-graduacao.pdf",
+  "id_arquivo": "23",
+  "modelo": "gemini-flash-latest",
+  "tokens": null,
+  "tokens_media_lote": 14917,
+  "arquivos_no_lote": 4,
+  "parametros_llm": {
+    "provider": "google",
+    "model": "gemini-flash-latest",
+    "temperature": 0.0,
+    "max_tokens": null,
+    "timeout": null,
+    "top_p": null,
+    "top_k": null,
+    "base_url": null
+  },
+  "prompt_utilizado": "prompt_extracao_regras_v4.md",
+  "regras": [
+    {
+      "id": "R01",
+      "descricao": "Ser docente do quadro efetivo da instituição e ter concluído o Estágio Probatório.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Art. 1º, Inciso I"
+    },
+    {
+      "id": "R02",
+      "descricao": "Comunicar por escrito ao Departamento a pretensão de participar de processo seletivo de pós-graduação, constante da programação do Departamento e do Plano Individual de Trabalho (PIT).",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Art. 1º, Inciso II"
+    },
+    {
+      "id": "R03",
+      "descricao": "Ter a solicitação de afastamento apreciada pela área de conhecimento, pelo Colegiado de Curso e, posteriormente, deliberada pelo Conselho de Departamento.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Art. 1º, Inciso III"
+    },
+    {
+      "id": "R04",
+      "descricao": "Comprovar aprovação em programa de pós-graduação oferecido por instituição oficial e devidamente recomendado pela CAPES/MEC.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Art. 2º"
+    },
+    {
+      "id": "R05",
+      "descricao": "O programa de pós-graduação deve ser reconhecido pelo sistema oficial de educação do respectivo país.",
+      "tipo": "condicional",
+      "condicao": "Apenas para cursos realizados no exterior.",
+      "referencia": "Art. 2º, § 1º"
+    },
+    {
+      "id": "R06",
+      "descricao": "Apresentar comprovante de aprovação no programa de pós-graduação.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Art. 6º, alínea a"
+    },
+    {
+      "id": "R07",
+      "descricao": "Apresentar formulário de afastamento, fornecido pela Pró-reitoria de Gestão e Desenvolvimento de Pessoas (PGDP), devidamente preenchido.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Art. 6º, alínea b"
+    },
+    {
+      "id": "R08",
+      "descricao": "Apresentar termo de compromisso de retorno ao Departamento de lotação para cumprimento de período igual ao do afastamento.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Art. 6º, alínea c e Art. 8º"
+    },
+    {
+      "id": "R09",
+      "descricao": "Apresentar Declaração do Departamento de atendimento ao planejamento e garantia do processo de liberação do docente (conforme Art. 3º).",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Art. 6º, alínea d"
+    },
+    {
+      "id": "R10",
+      "descricao": "Obter expressa autorização do Governador do Estado.",
+      "tipo": "condicional",
+      "condicao": "Apenas para estudos de pós-graduação no exterior.",
+      "referencia": "Art. 8º, § 2º"
+    },
+    {
+      "id": "R11",
+      "descricao": "Não estabelecer vínculos com programas especiais remunerados durante o período de afastamento.",
+      "tipo": "restritiva",
+      "condicao": null,
+      "referencia": "Art. 8º, § 3º"
+    }
+  ]
+}

@@ -1,0 +1,140 @@
+{
+  "arquivo": "39_edital-no-29-2024-prpgi-ifba-retificado-em-30-04-2025.PDF.pdf",
+  "id_arquivo": "39",
+  "modelo": "gemini-flash-latest",
+  "tokens": null,
+  "tokens_media_lote": 22473,
+  "arquivos_no_lote": 4,
+  "parametros_llm": {
+    "provider": "google",
+    "model": "gemini-flash-latest",
+    "temperature": 0.0,
+    "max_tokens": null,
+    "timeout": null,
+    "top_p": null,
+    "top_k": null,
+    "base_url": null
+  },
+  "prompt_utilizado": "prompt_extracao_regras_v4.md",
+  "regras": [
+    {
+      "id": "R01",
+      "descricao": "Serão elegíveis as propostas submetidas pelo responsável pelo Laboratório onde estão as instalações/equipamento multiusuário conforme declaração da direção do Campus.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 3.1"
+    },
+    {
+      "id": "R02",
+      "descricao": "O Laboratório e os equipamentos deverão estar registrados junto à PRPGI, conforme orientações fornecidas às direções/coordenações de pesquisa dos Campi.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 3.2"
+    },
+    {
+      "id": "R03",
+      "descricao": "O proponente precisa estar adimplente com todos os programas da PRPGI.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 3.3"
+    },
+    {
+      "id": "R04",
+      "descricao": "O proponente deverá pertencer ao quadro de docentes ativos e permanentes de um programa de pós-graduação stricto sensu do IFBA.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 3.4"
+    },
+    {
+      "id": "R05",
+      "descricao": "As propostas deverão estar devidamente justificadas quanto à utilização dos recursos no âmbito da pós-graduação.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 3.5"
+    },
+    {
+      "id": "R06",
+      "descricao": "O responsável pelo equipamento deverá enviar a proposta de manutenção, conforme Anexo 01.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 5.1"
+    },
+    {
+      "id": "R07",
+      "descricao": "Serão contemplados neste Edital, exclusivamente, equipamentos que foram incorporados ao patrimônio do IFBA.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 5.3"
+    },
+    {
+      "id": "R08",
+      "descricao": "As propostas serão encaminhadas via SUAP, utilizando a aba ‘Pesquisa’ > ‘Projetos’ > ‘Submeter projeto’, em seguida escolhendo o Edital.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 5.4"
+    },
+    {
+      "id": "R09",
+      "descricao": "Preencher a aba ‘Dados do projeto’ com identificações da proposta, escrevendo “ver arquivo PDF” nas demais abas, caso o sistema solicite seu preenchimento para concluir a submissão.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 5.4 (a)"
+    },
+    {
+      "id": "R10",
+      "descricao": "As abas ‘Metas/Objetivos’, ‘Plano de Aplicação’ e ‘Plano de desembolso' podem ser preenchidas apenas com “não se aplica”.",
+      "tipo": "condicional",
+      "condicao": "Caso o sistema solicite seu preenchimento para concluir a submissão.",
+      "referencia": "Item 5.4 (b)"
+    },
+    {
+      "id": "R11",
+      "descricao": "Deverá submeter um arquivo em PDF único, contendo, nesta ordem: (i) Dados da proposta (Anexo 01), evidenciando os Itens pontuados no Anexo 02; e (ii) Declaração da Direção Geral do Campus informando o responsável pelo Laboratório onde está instalado o(s) equipamento(s).",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 5.5"
+    },
+    {
+      "id": "R12",
+      "descricao": "O arquivo PDF deverá ser anexado na aba ‘Equipe’ do SUAP.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 5.6"
+    },
+    {
+      "id": "R13",
+      "descricao": "Interposições de recursos e pedidos de impugnação devem ser enviados exclusivamente por meio do SUAP.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 5.8"
+    },
+    {
+      "id": "R14",
+      "descricao": "Para a implementação do recurso financeiro, a empresa contratada para a prestação do serviço não poderá apresentar nenhuma pendência fiscal.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 5.9"
+    },
+    {
+      "id": "R15",
+      "descricao": "O valor total solicitado deve contemplar, quando houver, as despesas acessórias incidentes sobre as aquisições/contratações, por exemplo, frete, taxas de importação etc.",
+      "tipo": "obrigatória",
+      "condicao": null,
+      "referencia": "Item 5.10"
+    },
+    {
+      "id": "R16",
+      "descricao": "Como parâmetro para o cálculo das despesas acessórias de importação, considerar o acréscimo do percentual de 15% (quinze por cento) sobre o valor total do produto (material de consumo) ou serviços prestados.",
+      "tipo": "condicional",
+      "condicao": "Apenas para despesas acessórias de importação.",
+      "referencia": "Item 5.11"
+    },
+    {
+      "id": "R17",
+      "descricao": "Cada proposta poderá requerer e ser contemplada com até R$ 60.000,00 (sessenta mil reais).",
+      "tipo": "restritiva",
+      "condicao": null,
+      "referencia": "Item 8.2"
+    }
+  ]
+}
