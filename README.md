@@ -674,6 +674,22 @@ score_combinado = 0.6 × 0.857 + 0.2 × 1.0 + 0.2 × 1.0
 
 Para cada regra extraída, o avaliador calcula esse score contra **todas** as regras da referência e guarda apenas o maior — o `melhor_score_combinado`. Se esse valor for ≥ `MATCH_THRESHOLD`, a regra é considerada **encontrada** (para precisão) ou **coberta** (para revocação).
 
+O avaliador nunca força um emparelhamento fixo entre regras. Cada regra extraída compete livremente contra todas as regras do gabarito — o melhor match vence, independente de posição ou ordem. O mesmo vale no sentido inverso: cada regra do gabarito busca seu melhor match entre todas as extraídas.
+
+**Exemplo:** documento com 3 regras no gabarito
+
+```
+Regra extraída R07: "Apresentar comprovante de quitação eleitoral."
+
+vs. Ref R01 "Ser servidor efetivo..."              → score 0.042
+vs. Ref R02 "Apresentar RG e CPF..."               → score 0.231
+vs. Ref R03 "Apresentar comprovante eleitoral."    → score 0.762   ← melhor
+
+melhor_score_combinado de R07 = 0.762
+```
+
+Com `MATCH_THRESHOLD=0.75`: `0.762 ≥ 0.75` → R07 é marcada como `encontrada_na_referencia: true`.
+
 ---
 
 ### Etapa 4 — Precisão, Revocação e F1
@@ -748,6 +764,25 @@ F1 = 2 × 0.800 × 1.000 / (0.800 + 1.000)
 ```
 
 Se a precisão caísse para 0.5 com a mesma revocação, a média aritmética seria 0.75 — número que parece razoável. O F1 seria 0.667 — um número que reflete melhor o problema real.
+
+#### Métricas globais (resumo entre todos os arquivos)
+
+As métricas do `resumo` **não são a média das métricas por arquivo**. O avaliador soma os contadores brutos de todos os arquivos e recalcula do zero:
+
+```
+precisao_geral  = Σ(encontradas_na_referencia) / Σ(regras_extraidas)
+revocacao_geral = Σ(referencia_cobertas)        / Σ(regras_na_referencia)
+```
+
+**Por quê?** Fazer média das métricas daria peso igual a documentos com 2 regras e documentos com 50 regras. Somar os contadores dá peso proporcional ao volume real de cada arquivo:
+
+```
+Arquivo A:  2 extraídas,   2 encontradas   →  P = 1.00
+Arquivo B: 50 extraídas,  25 encontradas   →  P = 0.50
+
+Média das precisões:   (1.00 + 0.50) / 2 = 0.750  ← peso igual, ignora tamanho
+Soma dos contadores:   27 / 52           = 0.519  ← peso real, proporcional ao volume
+```
 
 ---
 
