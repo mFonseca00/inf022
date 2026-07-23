@@ -73,4 +73,16 @@ export const api = {
     req<{ detail: string }>(`/processos/${encodeURIComponent(processoId)}/regras/${regraId}`, {
       method: "DELETE",
     }),
+
+  renomearProcesso: (processoId: string, nome: string) =>
+    req<{ id: string; arquivo: string }>(`/processos/${encodeURIComponent(processoId)}/nome`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nome }),
+    }),
+
+  excluirProcesso: (processoId: string) =>
+    req<{ detail: string }>(`/processos/${encodeURIComponent(processoId)}`, {
+      method: "DELETE",
+    }),
 };

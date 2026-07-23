@@ -103,6 +103,33 @@ def adicionar_regra(processo_id: str, regra: dict) -> Optional[dict]:
     return regra
 
 
+def renomear_processo(processo_id: str, novo_nome: str) -> Optional[dict]:
+    json_path = _find_by_id(processo_id)
+    if not json_path:
+        return None
+    data = json.loads(json_path.read_text(encoding="utf-8"))
+    data["arquivo"] = novo_nome
+    json_path.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    return {"id": processo_id, "arquivo": novo_nome}
+
+
+def excluir_processo(processo_id: str) -> bool:
+    json_path = _find_by_id(processo_id)
+    if not json_path:
+        return False
+    json_path.unlink()
+    # Remove a pasta de execução se ficar vazia
+    try:
+        parent = json_path.parent
+        remaining = [f for f in parent.iterdir() if not f.name.startswith("_")]
+        if not remaining:
+            import shutil
+            shutil.rmtree(parent)
+    except Exception:
+        pass
+    return True
+
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

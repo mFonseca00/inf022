@@ -29,6 +29,10 @@ class RegraCreate(BaseModel):
     referencia: str | None = None
 
 
+class ProcessoRename(BaseModel):
+    nome: str
+
+
 # ---------------------------------------------------------------------------
 # Endpoints
 # ---------------------------------------------------------------------------
@@ -115,3 +119,21 @@ def adicionar_regra(processo_id: str, regra: RegraCreate):
     if not nova:
         raise HTTPException(status_code=404, detail="Processo não encontrado.")
     return nova
+
+
+@router.patch("/{processo_id}/nome")
+def renomear_processo(processo_id: str, body: ProcessoRename):
+    """Atualiza o nome (campo arquivo) de um processo."""
+    resultado = storage_service.renomear_processo(processo_id, body.nome.strip())
+    if not resultado:
+        raise HTTPException(status_code=404, detail="Processo não encontrado.")
+    return resultado
+
+
+@router.delete("/{processo_id}")
+def excluir_processo(processo_id: str):
+    """Remove permanentemente um processo (apaga o JSON de resultados)."""
+    removido = storage_service.excluir_processo(processo_id)
+    if not removido:
+        raise HTTPException(status_code=404, detail="Processo não encontrado.")
+    return {"detail": "Processo excluído com sucesso."}
