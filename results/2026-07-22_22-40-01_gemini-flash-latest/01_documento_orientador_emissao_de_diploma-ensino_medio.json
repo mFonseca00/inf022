@@ -2,7 +2,7 @@
   "arquivo": "01_documento_orientador_emissao_de_diploma-ensino_medio.pdf",
   "id_arquivo": "01",
   "modelo": "gemini-flash-latest",
-  "tokens": 37761,
+  "tokens": 38046,
   "tokens_media_lote": null,
   "arquivos_no_lote": null,
   "parametros_llm": {

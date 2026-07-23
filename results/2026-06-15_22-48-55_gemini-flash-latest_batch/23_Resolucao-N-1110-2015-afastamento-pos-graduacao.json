@@ -18,15 +18,8 @@
   "prompt_utilizado": "prompt_extracao_regras_v4.md",
   "regras": [
     {
-      "id": "R01",
-      "descricao": "Ser docente do quadro efetivo da instituição.",
-      "tipo": "obrigatória",
-      "condicao": null,
-      "referencia": "Art. 1º, Parágrafo Único, I"
-    },
-    {
       "id": "R02",
-      "descricao": "Ter concluído o Estágio Probatório.",
+      "descricao": "Teste",
       "tipo": "obrigatória",
       "condicao": null,
       "referencia": "Art. 1º, Parágrafo Único, I"
